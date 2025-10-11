@@ -370,7 +370,7 @@ export default function Home() {
   }, [handleScrollLogic]);
 
   return (
-    <main ref={containerRef} className="custom-height overflow-hidden relative">
+    <main ref={containerRef} className="custom-height overflow-hidden relative bg-[#0a0a0a]">
       <div
         className="transition-transform duration-700 ease-out"
         style={{

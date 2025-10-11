@@ -8,7 +8,7 @@ function Header() {
 
   return (
     <>
-      <header className="max-w-[90%] m-auto flex items-center justify-between h-[70px] relative z-50">
+      <header className="bg-[#0a0a0a] max-w-[90%] m-auto flex items-center justify-between h-[70px] relative z-50">
         <Image src="/southbox2.png" alt="logo" width={100} height={100} />
 
         <button
@@ -63,7 +63,7 @@ function Header() {
       {/* Menu Overlay with Blob Animation */}
       <div
         className={`
-          fixed inset-0 bg-black z-40
+          fixed inset-0 bg-[#0a0a0a] z-40
           transition-all duration-[1s]
           ${isMenuOpen ? "opacity-100" : "opacity-0 pointer-events-none"}
         `}
