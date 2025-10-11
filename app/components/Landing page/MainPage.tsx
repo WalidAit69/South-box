@@ -20,7 +20,6 @@ export default function MainPage({ scrollProgress }: LandingProps) {
   const rafRef = useRef<number>(null);
 
   useEffect(() => {
-    // Trigger animation after component mounts
     const timer = setTimeout(() => {
       setIsLoaded(true);
     }, 100);
@@ -28,37 +27,32 @@ export default function MainPage({ scrollProgress }: LandingProps) {
     return () => clearTimeout(timer);
   }, []);
 
-  // Smooth easing function for more natural animation
   const easeOutCubic = (t: number): number => {
     return 1 - Math.pow(1 - t, 3);
   };
 
   const easedProgress = easeOutCubic(scrollProgress);
 
-  // Calculate transforms with easing
+  // Responsive transform calculations
   const southTranslateX = -1300 * easedProgress;
   const boxTranslateX = 850 * easedProgress;
   const imageScale = 1 + 5 * easedProgress;
   const imageRotate = 12 * easedProgress;
   const taglineOpacity = 1 - scrollProgress;
 
-  // Determine if we should use delays (only on initial load, not during scroll)
   const useLoadDelays = isLoaded && scrollProgress === 0;
 
   const handlePageMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    // Cancel any pending animation frame
     if (rafRef.current) {
       cancelAnimationFrame(rafRef.current);
     }
 
-    // Use requestAnimationFrame for smoother updates
     rafRef.current = requestAnimationFrame(() => {
       const { innerWidth, innerHeight } = window;
 
       const offsetX = (e.clientX / innerWidth - 0.5) * 2;
       const offsetY = (e.clientY / innerHeight - 0.5) * 2;
 
-      // Reduced movement range for smoother feel
       const translateX = offsetX * 30;
       const translateY = offsetY * 30;
       const rotateX = offsetY * -15;
@@ -79,7 +73,6 @@ export default function MainPage({ scrollProgress }: LandingProps) {
   };
 
   const handlePageMouseLeave = () => {
-    // Cancel any pending animation frame
     if (rafRef.current) {
       cancelAnimationFrame(rafRef.current);
     }
@@ -97,8 +90,9 @@ export default function MainPage({ scrollProgress }: LandingProps) {
       onMouseLeave={handlePageMouseLeave}
     >
       <div className="relative z-10 w-full">
+        {/* CTA Button - Responsive positioning */}
         <div
-          className="absolute right-0 transition-all duration-300"
+          className="absolute right-0 -top-30 lg:top-[40%] lg:right-[70%] transition-all duration-300 z-20 2xl:right-0 2xl:top-2"
           style={{
             opacity: isLoaded ? taglineOpacity : 0,
             transitionDuration: isLoaded ? "1s, 2s" : "0s",
@@ -108,6 +102,7 @@ export default function MainPage({ scrollProgress }: LandingProps) {
           <CtaButton text="Start a project" />
         </div>
 
+        {/* Prism Image - Responsive sizing */}
         <div
           className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 will-change-transform"
           style={{
@@ -125,7 +120,7 @@ export default function MainPage({ scrollProgress }: LandingProps) {
             alt="south box"
             width={300}
             height={300}
-            className="pointer-events-none select-none"
+            className="pointer-events-none select-none w-[150px] h-[150px] sm:w-[200px] sm:h-[200px] md:w-[250px] md:h-[250px] lg:w-[300px] lg:h-[300px]"
             style={{
               opacity: taglineOpacity,
               transition: "opacity 0.3s ease-out",
@@ -133,12 +128,12 @@ export default function MainPage({ scrollProgress }: LandingProps) {
           />
         </div>
 
-        {/* Headings - Breaking out of container */}
+        {/* Headings - Now using CSS classes from globals.css */}
         <div className="relative flex flex-col z-10 -mx-[5vw] w-[100vw]">
-          {/* South heading with reveal animation */}
+          {/* South heading */}
           <div className="overflow-hidden px-[5vw]">
             <h1
-              className="text-[22rem] leading-none font-bold tracking-tight uppercase will-change-transform"
+              className="hero-heading"
               style={{
                 transform: `translateX(${southTranslateX}px) translateY(${
                   isLoaded ? "0" : "100%"
@@ -154,10 +149,10 @@ export default function MainPage({ scrollProgress }: LandingProps) {
             </h1>
           </div>
 
-          {/* Box heading with reveal animation */}
+          {/* Box heading */}
           <div className="overflow-hidden self-end px-[5vw]">
             <h1
-              className="text-[22rem] leading-none font-bold tracking-tight uppercase will-change-transform"
+              className="hero-heading"
               style={{
                 transform: `translateX(${boxTranslateX}px) translateY(${
                   isLoaded ? "0" : "100%"
@@ -167,7 +162,6 @@ export default function MainPage({ scrollProgress }: LandingProps) {
                 transitionTimingFunction: isLoaded
                   ? "cubic-bezier(0.25, 0.46, 0.45, 0.94), cubic-bezier(0.16, 1, 0.3, 1)"
                   : "ease",
-                // transitionDelay: isLoaded ? "0.2s, 0.5s" : "0s",
               }}
             >
               Box
@@ -175,8 +169,8 @@ export default function MainPage({ scrollProgress }: LandingProps) {
           </div>
         </div>
 
-        {/* Tagline with reveal animation */}
-        <div className="overflow-hidden max-w-md">
+        {/* Tagline - Now using CSS class from globals.css */}
+        <div className="overflow-hidden max-w-md mt-6 lg:mt-0">
           <div
             className="will-change-[opacity,transform]"
             style={{
@@ -187,10 +181,9 @@ export default function MainPage({ scrollProgress }: LandingProps) {
               transitionTimingFunction: isLoaded
                 ? "ease-out, cubic-bezier(0.16, 1, 0.3, 1)"
                 : "ease",
-              // transitionDelay: isLoaded ? "0.3s, 0.7s" : "0s",
             }}
           >
-            <p className="text-2xl font-light leading-relaxed">
+            <p className="hero-tagline">
               The agency that covers your digital needs in a creative and
               efficient way
             </p>

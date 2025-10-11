@@ -1,51 +1,142 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import MainPage from "../components/Landing page/MainPage";
 import Letstalk from "../components/Landing page/Letstalk";
 import WhatwedoPage from "../components/Landing page/WhatwedoPage";
 import TextReveal from "../components/Landing page/TextReveal";
 import ProjectsSection from "../components/Landing page/ProjectsSection";
+import TrustusPage from "../components/Landing page/TrustusPage";
+import Footer from "../components/Footer";
+import LeaveRequest from "../components/Landing page/LeaveRequest";
+
+const SECTIONS = {
+  MAIN: 0,
+  LETSTALK: 1,
+  TEXT_REVEAL: 2,
+  WHATWEDO: 3,
+  PROJECTS: 4,
+  TRUSTUS: 5,
+  LEAVEREQUEST: 6,
+  FOOTER: 7,
+};
+
+const SCROLL_CONFIG = {
+  STANDARD_DIVISOR: 1500,
+  PROJECTS_DIVISOR: 2000,
+  PROJECTS_MAX: 2.0,
+  TRANSITION_DELAY: 100,
+  LONG_TRANSITION_DELAY: 800,
+  // Mobile-friendly divisors
+  MOBILE_STANDARD_DIVISOR: 1000,
+  MOBILE_PROJECTS_DIVISOR: 1500,
+};
 
 export default function Home() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [currentSection, setCurrentSection] = useState(0);
+  const [currentSection, setCurrentSection] = useState(SECTIONS.MAIN);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [section2Progress, setSection2Progress] = useState(0);
   const [section3Progress, setSection3Progress] = useState(0);
   const [section4Progress, setSection4Progress] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
 
   const isScrolling = useRef(false);
-  const animationFrameRef = useRef<number>(null);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Detect mobile viewport
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  // Cleanup timeouts on unmount
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
+
+  const transitionToSection = useCallback(
+    (newSection: number, delay: number, callback?: () => void) => {
+      isScrolling.current = true;
+
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+
+      timeoutRef.current = setTimeout(() => {
+        setCurrentSection(newSection);
+        callback?.();
+        isScrolling.current = false;
+      }, delay);
+    },
+    []
+  );
+
+  const updateProgress = useCallback(
+    (
+      currentProgress: number,
+      scrollAmount: number,
+      direction: number,
+      divisor: number,
+      max = 1
+    ) => {
+      const delta = (scrollAmount / divisor) * direction;
+      return Math.max(0, Math.min(max, currentProgress + delta));
+    },
+    []
+  );
 
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
       e.preventDefault();
 
-      if (
-        isScrolling.current &&
-        currentSection !== 0 &&
-        currentSection !== 2 &&
-        currentSection !== 3 &&
-        currentSection !== 4
-      )
+      const scrollableSections = [
+        SECTIONS.MAIN,
+        SECTIONS.TEXT_REVEAL,
+        SECTIONS.WHATWEDO,
+        SECTIONS.PROJECTS,
+      ];
+
+      if (isScrolling.current && !scrollableSections.includes(currentSection)) {
         return;
+      }
 
       const direction = e.deltaY > 0 ? 1 : -1;
       const scrollAmount = Math.abs(e.deltaY);
 
-      // Handle section 0 scroll progress
-      if (currentSection === 0) {
+      // Use mobile-friendly divisors on smaller screens
+      const standardDivisor = isMobile
+        ? SCROLL_CONFIG.MOBILE_STANDARD_DIVISOR
+        : SCROLL_CONFIG.STANDARD_DIVISOR;
+      const projectsDivisor = isMobile
+        ? SCROLL_CONFIG.MOBILE_PROJECTS_DIVISOR
+        : SCROLL_CONFIG.PROJECTS_DIVISOR;
+
+      // Section 0: Main page
+      if (currentSection === SECTIONS.MAIN) {
         setScrollProgress((prev) => {
-          const delta = (scrollAmount / 1500) * direction;
-          const newProgress = Math.max(0, Math.min(1, prev + delta));
+          const newProgress = updateProgress(
+            prev,
+            scrollAmount,
+            direction,
+            standardDivisor
+          );
 
           if (newProgress >= 1 && direction === 1 && !isScrolling.current) {
-            isScrolling.current = true;
-            setTimeout(() => {
-              setCurrentSection(1);
-              isScrolling.current = false;
-            }, 100);
+            transitionToSection(
+              SECTIONS.LETSTALK,
+              SCROLL_CONFIG.TRANSITION_DELAY
+            );
           }
 
           return newProgress;
@@ -53,51 +144,49 @@ export default function Home() {
         return;
       }
 
-      // Scrolling up from section 1 back to section 0
-      if (currentSection === 1 && direction === -1) {
-        isScrolling.current = true;
-        setCurrentSection(0);
-        setScrollProgress(1);
-
-        setTimeout(() => {
-          isScrolling.current = false;
-        }, 800);
+      // Section 1: Letstalk
+      if (currentSection === SECTIONS.LETSTALK) {
+        if (direction === -1) {
+          setScrollProgress(1);
+          transitionToSection(
+            SECTIONS.MAIN,
+            SCROLL_CONFIG.LONG_TRANSITION_DELAY
+          );
+        } else {
+          setSection2Progress(0);
+          transitionToSection(
+            SECTIONS.TEXT_REVEAL,
+            SCROLL_CONFIG.LONG_TRANSITION_DELAY
+          );
+        }
         return;
       }
 
-      // Handle section 1 to section 2 transition
-      if (currentSection === 1 && direction === 1) {
-        isScrolling.current = true;
-        setCurrentSection(2);
-        setSection2Progress(0);
-
-        setTimeout(() => {
-          isScrolling.current = false;
-        }, 800);
-        return;
-      }
-
-      // Handle section 2 scroll progress
-      if (currentSection === 2) {
+      // Section 2: Text Reveal
+      if (currentSection === SECTIONS.TEXT_REVEAL) {
         setSection2Progress((prev) => {
-          const delta = (scrollAmount / 1500) * direction;
-          const newProgress = Math.max(0, Math.min(1, prev + delta));
+          const newProgress = updateProgress(
+            prev,
+            scrollAmount,
+            direction,
+            standardDivisor
+          );
 
           if (newProgress <= 0 && direction === -1 && !isScrolling.current) {
-            isScrolling.current = true;
-            setTimeout(() => {
-              setCurrentSection(1);
-              isScrolling.current = false;
-            }, 100);
-          }
-
-          if (newProgress >= 1 && direction === 1 && !isScrolling.current) {
-            isScrolling.current = true;
-            setTimeout(() => {
-              setCurrentSection(3);
-              setSection3Progress(0);
-              isScrolling.current = false;
-            }, 100);
+            transitionToSection(
+              SECTIONS.LETSTALK,
+              SCROLL_CONFIG.TRANSITION_DELAY
+            );
+          } else if (
+            newProgress >= 1 &&
+            direction === 1 &&
+            !isScrolling.current
+          ) {
+            transitionToSection(
+              SECTIONS.WHATWEDO,
+              SCROLL_CONFIG.TRANSITION_DELAY,
+              () => setSection3Progress(0)
+            );
           }
 
           return newProgress;
@@ -105,28 +194,32 @@ export default function Home() {
         return;
       }
 
-      // Handle section 3 scroll progress
-      if (currentSection === 3) {
+      // Section 3: What we do
+      if (currentSection === SECTIONS.WHATWEDO) {
         setSection3Progress((prev) => {
-          const delta = (scrollAmount / 1500) * direction;
-          const newProgress = Math.max(0, Math.min(1, prev + delta));
+          const newProgress = updateProgress(
+            prev,
+            scrollAmount,
+            direction,
+            standardDivisor
+          );
 
           if (newProgress <= 0 && direction === -1 && !isScrolling.current) {
-            isScrolling.current = true;
-            setTimeout(() => {
-              setCurrentSection(2);
-              setSection2Progress(1);
-              isScrolling.current = false;
-            }, 100);
-          }
-
-          if (newProgress >= 1 && direction === 1 && !isScrolling.current) {
-            isScrolling.current = true;
-            setTimeout(() => {
-              setCurrentSection(4);
-              setSection4Progress(0);
-              isScrolling.current = false;
-            }, 100);
+            transitionToSection(
+              SECTIONS.TEXT_REVEAL,
+              SCROLL_CONFIG.TRANSITION_DELAY,
+              () => setSection2Progress(1)
+            );
+          } else if (
+            newProgress >= 1 &&
+            direction === 1 &&
+            !isScrolling.current
+          ) {
+            transitionToSection(
+              SECTIONS.PROJECTS,
+              SCROLL_CONFIG.TRANSITION_DELAY,
+              () => setSection4Progress(0)
+            );
           }
 
           return newProgress;
@@ -134,25 +227,70 @@ export default function Home() {
         return;
       }
 
-      // Handle section 4 scroll progress - Extended for more projects
-      if (currentSection === 4) {
+      // Section 4: Projects
+      if (currentSection === SECTIONS.PROJECTS) {
         setSection4Progress((prev) => {
-          // Slower scroll speed for section 4 to accommodate 8 projects
-          const delta = (scrollAmount / 2000) * direction;
-          // Allow scrolling up to 2.0 (double the normal range) for more content
-          const newProgress = Math.max(0, Math.min(2.0, prev + delta));
+          const newProgress = updateProgress(
+            prev,
+            scrollAmount,
+            direction,
+            projectsDivisor,
+            SCROLL_CONFIG.PROJECTS_MAX
+          );
 
           if (newProgress <= 0 && direction === -1 && !isScrolling.current) {
-            isScrolling.current = true;
-            setTimeout(() => {
-              setCurrentSection(3);
-              setSection3Progress(1);
-              isScrolling.current = false;
-            }, 100);
+            transitionToSection(
+              SECTIONS.WHATWEDO,
+              SCROLL_CONFIG.TRANSITION_DELAY,
+              () => setSection3Progress(1)
+            );
+          } else if (
+            newProgress >= SCROLL_CONFIG.PROJECTS_MAX &&
+            direction === 1 &&
+            !isScrolling.current
+          ) {
+            transitionToSection(
+              SECTIONS.TRUSTUS,
+              SCROLL_CONFIG.TRANSITION_DELAY
+            );
           }
 
           return newProgress;
         });
+        return;
+      }
+
+      // Section 5: Trustus
+      if (currentSection === SECTIONS.TRUSTUS) {
+        if (direction === -1) {
+          setSection4Progress(SCROLL_CONFIG.PROJECTS_MAX);
+          transitionToSection(
+            SECTIONS.PROJECTS,
+            SCROLL_CONFIG.TRANSITION_DELAY
+          );
+        } else {
+          transitionToSection(SECTIONS.LEAVEREQUEST, SCROLL_CONFIG.TRANSITION_DELAY);
+        }
+        return;
+      }
+
+      // Section 6: LEAVEREQUEST
+      if (currentSection === SECTIONS.LEAVEREQUEST) {
+        if (direction === -1) {
+          setSection4Progress(SCROLL_CONFIG.PROJECTS_MAX);
+          transitionToSection(
+            SECTIONS.TRUSTUS,
+            SCROLL_CONFIG.TRANSITION_DELAY
+          );
+        } else {
+          transitionToSection(SECTIONS.FOOTER, SCROLL_CONFIG.TRANSITION_DELAY);
+        }
+        return;
+      }
+
+      // Section 6: Footer
+      if (currentSection === SECTIONS.FOOTER && direction === -1) {
+        transitionToSection(SECTIONS.LEAVEREQUEST, SCROLL_CONFIG.TRANSITION_DELAY);
         return;
       }
     };
@@ -166,14 +304,11 @@ export default function Home() {
       if (container) {
         container.removeEventListener("wheel", handleWheel);
       }
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current);
-      }
     };
-  }, [currentSection]);
+  }, [currentSection, transitionToSection, updateProgress, isMobile]);
 
   return (
-    <main ref={containerRef} className="custom-height overflow-hidden">
+    <main ref={containerRef} className="custom-height overflow-hidden relative">
       <div
         className="transition-transform duration-700 ease-out"
         style={{
@@ -184,7 +319,10 @@ export default function Home() {
         <Letstalk />
         <TextReveal scrollProgress={section2Progress} />
         <WhatwedoPage scrollProgress={section3Progress} />
-        <ProjectsSection scrollProgress={section4Progress} />{" "}
+        <ProjectsSection scrollProgress={section4Progress} />
+        <TrustusPage />
+        <LeaveRequest />
+        <Footer />
       </div>
     </main>
   );

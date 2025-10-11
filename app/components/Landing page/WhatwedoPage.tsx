@@ -7,9 +7,7 @@ interface ProjectsSectionProps {
   scrollProgress: number;
 }
 
-export default function WhatwedoPage({
-  scrollProgress,
-}: ProjectsSectionProps) {
+export default function WhatwedoPage({ scrollProgress }: ProjectsSectionProps) {
   // Menu items data
   const menuItems = [
     {
@@ -38,14 +36,18 @@ export default function WhatwedoPage({
     },
   ];
 
-  // Calculate opacity based on scroll progress
+  // Calculate scale based on scroll progress
   const scale = 0.95 + scrollProgress * 0.05; // Scale from 0.95 to 1
 
   return (
     <section
-      className="custom-height mt-[140px] max-w-[90%] mx-auto relative overflow-hidden z-10"
+      className="custom-height
+        mt-20 sm:mt-24 md:mt-28 lg:mt-32 xl:mt-[140px]
+        max-w-[95%] sm:max-w-[92%] md:max-w-[90%] 
+        mx-auto 
+        relative overflow-hidden z-10
+        px-4 sm:px-6 md:px-8 lg:px-10"
       style={{
-        
         transform: `scale(${scale})`,
         transition: "opacity 0.3s ease-out, transform 0.3s ease-out",
       }}

@@ -17,8 +17,8 @@ function Letstalk() {
         });
       },
       {
-        threshold: 0.2, // Trigger when 20% of the section is visible
-        rootMargin: "0px 0px -100px 0px", // Trigger slightly before entering viewport
+        threshold: 0.2,
+        rootMargin: "0px 0px -100px 0px",
       }
     );
 
@@ -36,11 +36,19 @@ function Letstalk() {
   return (
     <section
       ref={sectionRef}
-      className="max-w-[90%] z-10 m-auto h-[100vh] flex items-center justify-between"
+      className="max-w-[90%] z-10 m-auto h-[100vh] lg:mt-0 mt-20
+        flex flex-col lg:flex-row 
+        items-center justify-center lg:justify-between
+        gap-0 lg:gap-12 
+        px-4 sm:px-6 lg:px-8 
+        py-[100px] lg:py-0"
     >
-      <div className="max-w-3xl overflow-hidden">
+      <div className="max-w-3xl overflow-hidden flex-1">
         <p
-          className="text-[2.5rem] font-light leading-relaxed will-change-transform"
+          className="text-2xl sm:text-3xl md:text-4xl lg:text-[2.5rem] 
+            font-light leading-relaxed 
+            will-change-transform 
+            text-center lg:text-left"
           style={{
             transform: isVisible ? "translateY(0)" : "translateY(100%)",
             opacity: isVisible ? 1 : 0,
@@ -55,7 +63,9 @@ function Letstalk() {
         </p>
       </div>
 
-      <CtaButton text="Let's talk" />
+      <div className="flex-shrink-0">
+        <CtaButton text="Let's talk" />
+      </div>
     </section>
   );
 }

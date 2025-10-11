@@ -51,15 +51,46 @@ export default function TextReveal({ scrollProgress }: TextRevealProps) {
   return (
     <section
       ref={sectionRef}
-      className="custom-height flex items-center justify-center px-4"
+      className="custom-height
+        flex items-center justify-center 
+        px-4 sm:px-6 md:px-8 lg:px-12"
     >
-      <div className="max-w-[90%] mx-auto">
-        <p className="flex flex-wrap gap-x-2 gap-y-1 text-2xl md:text-3xl lg:text-4xl xl:text-7xl font-bold p-5 md:p-8 lg:p-10">
+      <div className="max-w-[90%] mx-auto w-full">
+        <p
+          className="flex flex-wrap 
+          gap-x-1.5 gap-y-0.5 
+          sm:gap-x-2 sm:gap-y-1 
+          md:gap-x-2.5 md:gap-y-1 
+          lg:gap-x-3 lg:gap-y-1.5 
+          text-xl 
+          sm:text-2xl 
+          md:text-3xl 
+          lg:text-5xl 
+          xl:text-6xl 
+          2xl:text-7xl 
+          font-bold 
+          p-3 
+          sm:p-4 
+          md:p-6 
+          lg:p-8 
+          xl:p-10 
+          leading-tight 
+          sm:leading-tight 
+          md:leading-tight 
+          lg:leading-tight"
+        >
           {words.map((word, i) => (
             <span key={i} className="relative inline-block">
-              <span className="absolute inset-0 text-white/0 px-2">{word}</span>
               <span
-                className="relative text-white transition-opacity duration-300 ease-out px-2"
+                className="absolute inset-0 text-white/0 
+                px-1 sm:px-1.5 md:px-2"
+              >
+                {word}
+              </span>
+              <span
+                className="relative text-white 
+                  transition-opacity duration-300 ease-out 
+                  px-1 sm:px-1.5 md:px-2"
                 style={{
                   opacity: getWordOpacity(i),
                 }}

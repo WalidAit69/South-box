@@ -1,160 +1,173 @@
-"use client";
-
-import React from "react";
+import ScrollStack, { ScrollStackItem } from "./ScrollStackItem";
 
 interface ProjectsSectionProps {
   scrollProgress: number;
 }
 
-interface Project {
-  id: number;
-  title: string;
-  category: string;
-  image: string;
-}
-
-export default function ProjectsSection({
-  scrollProgress,
-}: ProjectsSectionProps) {
-  const projects: Project[] = [
+const ProjectsSection: React.FC<ProjectsSectionProps> = () => {
+  const projects = [
     {
-      id: 1,
       title: "E-Commerce Platform",
-      category: "Development",
-      image:
-        "https://images.unsplash.com/photo-1557821552-17105176677c?w=800&h=600&fit=crop",
+      description: "A modern shopping experience with seamless checkout",
+      category: "Web Development",
+      color: "bg-gray-900/50",
+      text: "text-white",
     },
     {
-      id: 2,
-      title: "Brand Identity",
-      category: "Branding",
-      image:
-        "https://images.unsplash.com/photo-1558655146-9f40138edfeb?w=800&h=600&fit=crop",
+      title: "Mobile Banking App",
+      description: "Secure and intuitive financial management",
+      category: "Mobile App",
+      color: "bg-gray-900/50",
+      text: "text-white",
     },
     {
-      id: 3,
-      title: "Mobile App Design",
-      category: "UI/UX",
-      image:
-        "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=800&h=600&fit=crop",
+      title: "AI Analytics Dashboard",
+      description: "Real-time insights powered by machine learning",
+      category: "Data Science",
+      color: "bg-gray-900/50",
+      text: "text-white",
     },
     {
-      id: 4,
-      title: "Marketing Campaign",
-      category: "Marketing",
-      image:
-        "https://images.unsplash.com/photo-1551650975-87deedd944c3?w=800&h=600&fit=crop",
+      title: "Social Media Platform",
+      description: "Connecting communities through shared experiences",
+      category: "Social Network",
+      color: "bg-gray-900/50",
+      text: "text-white",
     },
     {
-      id: 5,
-      title: "Corporate Website",
-      category: "Web Design",
-      image:
-        "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=600&fit=crop",
+      title: "Healthcare Portal",
+      description: "Patient-centered care management system",
+      category: "Healthcare",
+      color: "bg-white/50",
+      text: "text-black",
     },
     {
-      id: 6,
-      title: "Social Media Strategy",
-      category: "Digital Marketing",
-      image:
-        "https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=800&h=600&fit=crop",
+      title: "Smart Home IoT",
+      description: "Control your entire home from one interface",
+      category: "IoT",
+      color: "bg-white/60",
+      text: "text-black",
     },
     {
-      id: 7,
-      title: "Product Photography",
-      category: "Photography",
-      image:
-        "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&h=600&fit=crop",
-    },
-    {
-      id: 8,
-      title: "Video Production",
+      title: "Video Streaming Service",
+      description: "High-quality content delivery at scale",
       category: "Media",
-      image:
-        "https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=800&h=600&fit=crop",
+      color: "bg-white/70",
+      text: "text-black",
+    },
+    {
+      title: "Educational Platform",
+      description: "Interactive learning for the modern student",
+      category: "EdTech",
+      color: "bg-white/80",
+      text: "text-black",
     },
   ];
 
-  // Calculate animation progress for each project
-  const getProjectProgress = (index: number): number => {
-    const startPoint = index * 0.15; // Adjusted stagger timing
-    const duration = 0.5; // Animation duration
-    const endPoint = startPoint + duration;
-
-    if (scrollProgress < startPoint) return 0;
-    if (scrollProgress > endPoint)
-      return (scrollProgress - startPoint) / duration;
-
-    return (scrollProgress - startPoint) / duration;
-  };
-
-  const getProjectStyle = (index: number) => {
-    const progress = getProjectProgress(index);
-
-    // Easing function for smoother animation
-    const easeOutQuad = (t: number): number => {
-      return t * (2 - t);
-    };
-
-    const easedProgress = easeOutQuad(Math.min(progress, 1));
-
-    // Start at 40% scale and grow to full size
-    const initialScale = 0.4;
-    const scale = initialScale + easedProgress * (1 - initialScale);
-
-    // Start from bottom of viewport (150% down) and move up beyond top
-    const translateY = 150 - progress * 200; // Starts at 150%, moves to -50%
-
-    // Faster fade in, slower fade out
-    let opacity = 1;
-    if (progress < 0.2) {
-      // Quick fade in
-      opacity = progress / 0.2;
-    } else if (progress > 1.5) {
-      // Fade out only when almost off screen (for last items)
-      opacity = Math.max(0, 1 - (progress - 1.5) / 0.5);
-    }
-
-    return {
-      transform: `translateY(${translateY}%) scale(${scale})`,
-      opacity: opacity,
-      transition: "none",
-    };
-  };
-
   return (
-    <section className="custom-height mt-[250px] flex items-center justify-center px-4 py-20 relative overflow-visible">
-      <div className="max-w-7xl w-full mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
-          {projects.map((project, index) => (
-            <div
-              key={project.id}
-              className="relative overflow-hidden rounded-2xl group cursor-pointer w-[500px] h-[700px]"
-              style={getProjectStyle(index)}
-            >
-              <div className="w-full h-full relative overflow-hidden bg-gray-900">
-                <img
-                  src={project.image}
-                  alt={project.title}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                />
+    <section
+      className="max-w-[95%] sm:max-w-[92%] md:max-w-[90%] 
+      mx-auto h-screen 
+      mt-12 sm:mt-14 md:mt-16 lg:mt-[70px]
+      w-full text-white relative overflow-hidden
+      px-2 sm:px-4 md:px-6"
+    >
+      <div
+        className="absolute 
+        top-6 sm:top-8 md:top-10 lg:top-12 
+        left-4 sm:left-6 md:left-12 lg:left-16 xl:left-20 
+        z-10"
+      >
+        <h2
+          className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 
+          font-bold 
+          leading-tight"
+        >
+          Our Projects
+        </h2>
+        <p
+          className="text-gray-400 
+          mt-2 sm:mt-3 md:mt-4 
+          text-sm sm:text-base md:text-lg
+          max-w-xs sm:max-w-sm"
+        >
+          Scroll to explore our work
+        </p>
+      </div>
 
-                {/* Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                  <div className="absolute bottom-0 left-0 right-0 p-6 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-                    <p className="text-sm text-white/80 mb-2 uppercase tracking-wider">
-                      {project.category}
-                    </p>
-                    <h3 className="text-2xl md:text-3xl font-bold text-white">
-                      {project.title}
-                    </h3>
-                  </div>
-                </div>
+      <ScrollStack
+        className="h-full scrollbar-hide"
+        itemDistance={80}
+        itemScale={0.04}
+        itemStackDistance={25}
+        stackPosition="30%"
+        scaleEndPosition="15%"
+        baseScale={0.8}
+        rotationAmount={0}
+        blurAmount={2}
+      >
+        {projects.map((project, index) => (
+          <ScrollStackItem
+            key={index}
+            itemClassName={`${project.color} ${project.text}`}
+          >
+            <div
+              className="flex flex-col justify-between h-full 
+              p-4 sm:p-6 md:p-8 lg:p-10"
+            >
+              <div>
+                <span
+                  className="text-[10px] sm:text-xs md:text-sm 
+                  font-semibold opacity-80 uppercase tracking-wider"
+                >
+                  {project.category}
+                </span>
+                <h3
+                  className="text-xl sm:text-2xl md:text-3xl lg:text-4xl 
+                  font-bold 
+                  mt-2 sm:mt-3 md:mt-4
+                  leading-tight"
+                >
+                  {project.title}
+                </h3>
+                <p
+                  className="text-sm sm:text-base md:text-lg lg:text-xl 
+                  mt-2 sm:mt-3 md:mt-4 
+                  opacity-90
+                  leading-relaxed
+                  max-w-2xl"
+                >
+                  {project.description}
+                </p>
+              </div>
+              <div
+                className="flex flex-col sm:flex-row 
+                items-start sm:items-center 
+                justify-between 
+                gap-3 sm:gap-4 
+                mt-6"
+              >
+                <span className="text-xs sm:text-sm opacity-70">
+                  Project {index + 1} of {projects.length}
+                </span>
+                <button
+                  className="px-4 sm:px-5 md:px-6 
+                  py-1.5 sm:py-2 
+                  text-xs sm:text-sm md:text-base
+                  bg-white/20 hover:bg-white/30 
+                  rounded-full backdrop-blur-sm 
+                  transition-all
+                  whitespace-nowrap"
+                >
+                  View Details
+                </button>
               </div>
             </div>
-          ))}
-        </div>
-      </div>
+          </ScrollStackItem>
+        ))}
+      </ScrollStack>
     </section>
   );
-}
+};
+
+export default ProjectsSection;

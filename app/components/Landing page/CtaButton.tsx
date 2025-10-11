@@ -59,7 +59,15 @@ function CtaButton({ text }: props) {
       onMouseMove={handleButtonMove}
       onMouseEnter={handleButtonEnter}
       onMouseLeave={handleButtonLeave}
-      className="z-50 cursor-pointer group relative w-[300px] h-[300px] rounded-full border-2 border-white/30 hover:border-white transition-all duration-300 flex items-center justify-center overflow-hidden"
+      className="z-50 cursor-pointer group relative 
+        w-[120px] h-[120px] 
+        sm:w-[160px] sm:h-[160px] 
+        md:w-[200px] md:h-[200px] 
+        lg:w-[250px] lg:h-[250px] 
+        xl:w-[300px] xl:h-[300px] 
+        rounded-full border-2 border-white/30 hover:border-white 
+        transition-all duration-300 
+        flex items-center justify-center overflow-hidden"
     >
       {/* Circular reveal background */}
       <div
@@ -76,7 +84,9 @@ function CtaButton({ text }: props) {
         style={buttonTransform}
       >
         <svg
-          className="w-8 h-8 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1"
+          className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 xl:w-8 xl:h-8 
+            transition-transform duration-300 
+            group-hover:translate-x-1 group-hover:-translate-y-1"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -88,7 +98,13 @@ function CtaButton({ text }: props) {
             d="M7 17L17 7M17 7H7M17 7V17"
           />
         </svg>
-        <span className="mt-2 text-sm font-light">{text}</span>
+        <span
+          className="mt-1 sm:mt-1.5 md:mt-2 
+          text-[10px] sm:text-xs md:text-sm lg:text-sm xl:text-sm 
+          font-light"
+        >
+          {text}
+        </span>
       </div>
     </button>
   );

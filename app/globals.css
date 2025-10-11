@@ -49,6 +49,28 @@ body {
   }
 }
 
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
 .animate-pulse {
   animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
@@ -68,4 +90,117 @@ body {
 ::selection {
   background-color: white;
   color: #0a0a0a;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.8s ease-out;
+}
+
+/* Main Page Heading Responsive Styles */
+.hero-heading {
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  will-change: transform;
+}
+
+/* Base mobile size */
+.hero-heading {
+  font-size: clamp(4rem, 15vw, 6rem);
+}
+
+/* Small devices (landscape phones, 576px and up) */
+@media (min-width: 576px) and (min-height: 400px) {
+  .hero-heading {
+    font-size: clamp(6rem, 18vw, 10rem);
+  }
+}
+
+/* Medium devices (tablets, 768px and up) */
+@media (min-width: 768px) and (min-height: 600px) {
+  .hero-heading {
+    font-size: clamp(10rem, 20vw, 16rem);
+  }
+}
+
+/* Large devices (desktops, 992px and up) */
+@media (min-width: 992px) and (min-height: 700px) {
+  .hero-heading {
+    font-size: clamp(14rem, 22vw, 20rem);
+  }
+}
+
+/* Extra large devices (large desktops, 1200px and up) */
+@media (min-width: 1200px) and (min-height: 800px) {
+  .hero-heading {
+    font-size: clamp(18rem, 24vw, 22rem);
+  }
+}
+
+/* Ultra-wide displays */
+@media (min-width: 1920px) and (min-height: 900px) {
+  .hero-heading {
+    font-size: clamp(20rem, 25vw, 24rem);
+  }
+}
+
+/* Small height screens (landscape mobile, short windows) */
+@media (max-height: 600px) {
+  .hero-heading {
+    font-size: clamp(15rem, 20vw, 10rem);
+  }
+}
+
+/* Very small height screens */
+@media (max-height: 400px) {
+  .hero-heading {
+    font-size: clamp(2.5rem, 10vh, 5rem);
+  }
+}
+
+/* Tagline responsive styles */
+.hero-tagline {
+  font-weight: 300;
+  line-height: 1.6;
+}
+
+.hero-tagline {
+  font-size: clamp(0.875rem, 2vw, 1rem);
+}
+
+@media (min-width: 640px) {
+  .hero-tagline {
+    font-size: clamp(1rem, 2.2vw, 1.125rem);
+  }
+}
+
+@media (min-width: 768px) {
+  .hero-tagline {
+    font-size: clamp(1.125rem, 2.5vw, 1.25rem);
+  }
+}
+
+@media (min-width: 1024px) {
+  .hero-tagline {
+    margin-bottom: 1.5rem;
+    font-size: clamp(1rem, 2vw, 1rem);
+  }
+}
+
+/* Adjust for short screens */
+@media (max-height: 600px) {
+  .hero-tagline {
+    margin-bottom: 1rem;
+    font-size: clamp(0.75rem, 1.8vw, 1rem);
+  }
 }

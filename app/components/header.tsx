@@ -76,7 +76,7 @@ function Header() {
         }}
       >
         <nav className="flex items-center justify-start h-full pl-[10%]">
-          <ul className="space-y-8 text-white text-8xl font-semibold">
+          <ul className="space-y-8 text-white sm:text-8xl text-5xl font-semibold">
             {["Home", "About", "Services", "Contact"].map((item, index) => (
               <li key={item}>
                 {/* Overflow wrapper for reveal animation */}
