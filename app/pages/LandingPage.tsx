@@ -27,9 +27,9 @@ const SCROLL_CONFIG = {
   PROJECTS_MAX: 2.0,
   TRANSITION_DELAY: 100,
   LONG_TRANSITION_DELAY: 800,
-  MOBILE_STANDARD_DIVISOR: 1000,
-  MOBILE_PROJECTS_DIVISOR: 1500,
-  TOUCH_SENSITIVITY: 0.5, // Lower = more sensitive to touch
+  MOBILE_STANDARD_DIVISOR: 600, // Reduced from 1000 for faster scrolling
+  MOBILE_PROJECTS_DIVISOR: 800, // Reduced from 1500 for faster scrolling
+  TOUCH_SENSITIVITY: 1.5, // Increased from 0.5 for more responsive touch
 };
 
 export default function Home() {
@@ -341,8 +341,8 @@ export default function Home() {
       const scrollAmount =
         Math.abs(touchDelta) * SCROLL_CONFIG.TOUCH_SENSITIVITY;
 
-      // Only register significant swipes
-      if (Math.abs(touchDelta) > 30) {
+      // Reduced threshold for more responsive touch (from 30 to 20)
+      if (Math.abs(touchDelta) > 20) {
         handleScrollLogic(direction, scrollAmount);
       }
     };
@@ -370,7 +370,10 @@ export default function Home() {
   }, [handleScrollLogic]);
 
   return (
-    <main ref={containerRef} className="custom-height overflow-hidden relative bg-[#0a0a0a]">
+    <main
+      ref={containerRef}
+      className="custom-height overflow-hidden relative bg-[#0a0a0a]"
+    >
       <div
         className="transition-transform duration-700 ease-out"
         style={{

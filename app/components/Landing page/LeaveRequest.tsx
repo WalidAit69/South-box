@@ -82,7 +82,7 @@ function LeaveRequest() {
 
       {/* Form Content */}
       <div
-        className={`absolute inset-0 flex items-center justify-center
+        className={`absolute sm:inset-0 flex items-center justify-center
         transition-all duration-700 ease-out
         ${
           showForm

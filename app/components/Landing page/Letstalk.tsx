@@ -36,7 +36,7 @@ function Letstalk() {
   return (
     <section
       ref={sectionRef}
-      className="max-w-[90%] z-10 m-auto h-[100vh] lg:mt-0 mt-20
+      className="max-w-[90%] z-10 m-auto h-[100vh] lg:mt-0
         flex flex-col lg:flex-row 
         items-center justify-center lg:justify-between
         gap-0 lg:gap-12 

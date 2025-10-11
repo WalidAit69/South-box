@@ -40,8 +40,8 @@ const FlowingMenu: React.FC<FlowingMenuProps> = ({ items = [] }) => {
   const menuItems = items.length > 0 ? items : defaultItems;
 
   return (
-    <div className="w-full h-full overflow-hidden">
-      <nav className="flex flex-col h-full m-0 p-0">
+    <div className="w-full h-full flex flex-col justify-center overflow-hidden pb-10">
+      <nav className="flex flex-col m-0 p-0 h-[500px]">
         {menuItems.map((item, idx) => (
           <MenuItem key={idx} {...item} />
         ))}
@@ -108,7 +108,7 @@ const MenuItem: React.FC<MenuItemProps> = ({ link, text, image }) => {
   return (
     <div className="flex-1 relative overflow-hidden text-center shadow-[0_-1px_0_0_#fff] " ref={itemRef}>
       <a
-        className="flex items-center justify-center h-full relative cursor-pointer uppercase no-underline font-semibold text-white text-[4vh] hover:text-[#0000] focus:text-[#0000] focus-visible:text-[#0000] z-10"
+        className="flex items-center justify-center h-full relative cursor-pointer uppercase no-underline font-semibold text-white text-[2vh] sm:text-[4vh] hover:text-[#0000] focus:text-[#0000] focus-visible:text-[#0000] z-10"
         href={link}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
