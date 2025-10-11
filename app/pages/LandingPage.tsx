@@ -27,9 +27,9 @@ const SCROLL_CONFIG = {
   PROJECTS_MAX: 2.0,
   TRANSITION_DELAY: 100,
   LONG_TRANSITION_DELAY: 800,
-  // Mobile-friendly divisors
   MOBILE_STANDARD_DIVISOR: 1000,
   MOBILE_PROJECTS_DIVISOR: 1500,
+  TOUCH_SENSITIVITY: 0.5, // Lower = more sensitive to touch
 };
 
 export default function Home() {
@@ -44,7 +44,10 @@ export default function Home() {
   const isScrolling = useRef(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Detect mobile viewport
+  // Touch handling refs
+  const touchStartY = useRef<number>(0);
+  const touchStartTime = useRef<number>(0);
+
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768);
@@ -56,7 +59,6 @@ export default function Home() {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  // Cleanup timeouts on unmount
   useEffect(() => {
     return () => {
       if (timeoutRef.current) {
@@ -96,10 +98,8 @@ export default function Home() {
     []
   );
 
-  useEffect(() => {
-    const handleWheel = (e: WheelEvent) => {
-      e.preventDefault();
-
+  const handleScrollLogic = useCallback(
+    (direction: number, scrollAmount: number) => {
       const scrollableSections = [
         SECTIONS.MAIN,
         SECTIONS.TEXT_REVEAL,
@@ -111,10 +111,6 @@ export default function Home() {
         return;
       }
 
-      const direction = e.deltaY > 0 ? 1 : -1;
-      const scrollAmount = Math.abs(e.deltaY);
-
-      // Use mobile-friendly divisors on smaller screens
       const standardDivisor = isMobile
         ? SCROLL_CONFIG.MOBILE_STANDARD_DIVISOR
         : SCROLL_CONFIG.STANDARD_DIVISOR;
@@ -269,7 +265,10 @@ export default function Home() {
             SCROLL_CONFIG.TRANSITION_DELAY
           );
         } else {
-          transitionToSection(SECTIONS.LEAVEREQUEST, SCROLL_CONFIG.TRANSITION_DELAY);
+          transitionToSection(
+            SECTIONS.LEAVEREQUEST,
+            SCROLL_CONFIG.TRANSITION_DELAY
+          );
         }
         return;
       }
@@ -278,21 +277,32 @@ export default function Home() {
       if (currentSection === SECTIONS.LEAVEREQUEST) {
         if (direction === -1) {
           setSection4Progress(SCROLL_CONFIG.PROJECTS_MAX);
-          transitionToSection(
-            SECTIONS.TRUSTUS,
-            SCROLL_CONFIG.TRANSITION_DELAY
-          );
+          transitionToSection(SECTIONS.TRUSTUS, SCROLL_CONFIG.TRANSITION_DELAY);
         } else {
           transitionToSection(SECTIONS.FOOTER, SCROLL_CONFIG.TRANSITION_DELAY);
         }
         return;
       }
 
-      // Section 6: Footer
+      // Section 7: Footer
       if (currentSection === SECTIONS.FOOTER && direction === -1) {
-        transitionToSection(SECTIONS.LEAVEREQUEST, SCROLL_CONFIG.TRANSITION_DELAY);
+        transitionToSection(
+          SECTIONS.LEAVEREQUEST,
+          SCROLL_CONFIG.TRANSITION_DELAY
+        );
         return;
       }
+    },
+    [currentSection, transitionToSection, updateProgress, isMobile]
+  );
+
+  // Wheel event handler
+  useEffect(() => {
+    const handleWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      const direction = e.deltaY > 0 ? 1 : -1;
+      const scrollAmount = Math.abs(e.deltaY);
+      handleScrollLogic(direction, scrollAmount);
     };
 
     const container = containerRef.current;
@@ -305,7 +315,59 @@ export default function Home() {
         container.removeEventListener("wheel", handleWheel);
       }
     };
-  }, [currentSection, transitionToSection, updateProgress, isMobile]);
+  }, [handleScrollLogic]);
+
+  // Touch event handlers
+  useEffect(() => {
+    const handleTouchStart = (e: TouchEvent) => {
+      touchStartY.current = e.touches[0].clientY;
+      touchStartTime.current = Date.now();
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      e.preventDefault();
+    };
+
+    const handleTouchEnd = (e: TouchEvent) => {
+      const touchEndY = e.changedTouches[0].clientY;
+      const touchDelta = touchStartY.current - touchEndY;
+      const timeDelta = Date.now() - touchStartTime.current;
+
+      // Calculate velocity for more natural feeling
+      const velocity = Math.abs(touchDelta) / timeDelta;
+
+      // Determine direction and scroll amount
+      const direction = touchDelta > 0 ? 1 : -1;
+      const scrollAmount =
+        Math.abs(touchDelta) * SCROLL_CONFIG.TOUCH_SENSITIVITY;
+
+      // Only register significant swipes
+      if (Math.abs(touchDelta) > 30) {
+        handleScrollLogic(direction, scrollAmount);
+      }
+    };
+
+    const container = containerRef.current;
+    if (container) {
+      container.addEventListener("touchstart", handleTouchStart, {
+        passive: false,
+      });
+      container.addEventListener("touchmove", handleTouchMove, {
+        passive: false,
+      });
+      container.addEventListener("touchend", handleTouchEnd, {
+        passive: false,
+      });
+    }
+
+    return () => {
+      if (container) {
+        container.removeEventListener("touchstart", handleTouchStart);
+        container.removeEventListener("touchmove", handleTouchMove);
+        container.removeEventListener("touchend", handleTouchEnd);
+      }
+    };
+  }, [handleScrollLogic]);
 
   return (
     <main ref={containerRef} className="custom-height overflow-hidden relative">
