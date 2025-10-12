@@ -66,35 +66,11 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = () => {
 
   return (
     <section
-      className="max-w-[95%] sm:max-w-[92%] md:max-w-[90%] 
+      className="max-w-[95%] sm:max-w-[92%] md:max-w-[90%]
       mx-auto h-screen 
-      mt-12 sm:mt-14 md:mt-16 lg:mt-[70px]
       w-full text-white relative overflow-hidden
       px-2 sm:px-4 md:px-6"
     >
-      <div
-        className="absolute 
-        top-6 sm:top-8 md:top-10 lg:top-12 
-        left-4 sm:left-6 md:left-12 lg:left-16 xl:left-20 
-        z-10"
-      >
-        <h2
-          className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 
-          font-bold 
-          leading-tight"
-        >
-          Our Projects
-        </h2>
-        <p
-          className="text-gray-400 
-          mt-2 sm:mt-3 md:mt-4 
-          text-sm sm:text-base md:text-lg
-          max-w-xs sm:max-w-sm"
-        >
-          Scroll to explore our work
-        </p>
-      </div>
-
       <ScrollStack
         className="h-full scrollbar-hide"
         itemDistance={80}

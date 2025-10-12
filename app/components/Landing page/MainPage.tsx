@@ -1,23 +1,29 @@
 "use client";
 
 import Image from "next/image";
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useMemo } from "react";
 import CtaButton from "./CtaButton";
 
 interface LandingProps {
   scrollProgress: number;
 }
 
-interface TransformProps {
-  transform?: string;
-  transition?: string;
-  transformStyle?: "flat" | "preserve-3d";
+interface MouseTransform {
+  translateX: number;
+  translateY: number;
+  rotateX: number;
+  rotateY: number;
 }
 
 export default function MainPage({ scrollProgress }: LandingProps) {
-  const [imageTransform, setImageTransform] = useState<TransformProps>({});
+  const [mouseTransform, setMouseTransform] = useState<MouseTransform>({
+    translateX: 0,
+    translateY: 0,
+    rotateX: 0,
+    rotateY: 0,
+  });
   const [isLoaded, setIsLoaded] = useState(false);
-  const rafRef = useRef<number>(null);
+  const rafRef = useRef<number | null>(null);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -27,11 +33,22 @@ export default function MainPage({ scrollProgress }: LandingProps) {
     return () => clearTimeout(timer);
   }, []);
 
+  useEffect(() => {
+    return () => {
+      if (rafRef.current !== null) {
+        cancelAnimationFrame(rafRef.current);
+      }
+    };
+  }, []);
+
   const easeOutCubic = (t: number): number => {
     return 1 - Math.pow(1 - t, 3);
   };
 
-  const easedProgress = easeOutCubic(scrollProgress);
+  const easedProgress = useMemo(
+    () => easeOutCubic(scrollProgress),
+    [scrollProgress]
+  );
 
   // Responsive transform calculations
   const southTranslateX = -1300 * easedProgress;
@@ -58,16 +75,11 @@ export default function MainPage({ scrollProgress }: LandingProps) {
       const rotateX = offsetY * -15;
       const rotateY = offsetX * 15;
 
-      setImageTransform({
-        transform: `
-          translate(${translateX}px, ${translateY}px)
-          rotateX(${rotateX}deg)
-          rotateY(${rotateY}deg)
-          scale(${imageScale})
-          rotate(${imageRotate}deg)
-        `,
-        transition: "transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
-        transformStyle: "preserve-3d",
+      setMouseTransform({
+        translateX,
+        translateY,
+        rotateX,
+        rotateY,
       });
     });
   };
@@ -77,11 +89,22 @@ export default function MainPage({ scrollProgress }: LandingProps) {
       cancelAnimationFrame(rafRef.current);
     }
 
-    setImageTransform({
-      transform: `translate(0, 0) rotateX(0deg) rotateY(0deg) scale(${imageScale}) rotate(${imageRotate}deg)`,
-      transition: "transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)",
+    setMouseTransform({
+      translateX: 0,
+      translateY: 0,
+      rotateX: 0,
+      rotateY: 0,
     });
   };
+
+  // Combine mouse and scroll transforms
+  const combinedTransform = `
+    translate(${mouseTransform.translateX}px, ${mouseTransform.translateY}px)
+    rotateX(${mouseTransform.rotateX}deg)
+    rotateY(${mouseTransform.rotateY}deg)
+    scale(${imageScale})
+    rotate(${imageRotate}deg)
+  `;
 
   return (
     <section
@@ -106,13 +129,12 @@ export default function MainPage({ scrollProgress }: LandingProps) {
         <div
           className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 will-change-transform"
           style={{
-            ...imageTransform,
-            transform:
-              imageTransform.transform ||
-              `scale(${imageScale}) rotate(${imageRotate}deg)`,
+            transform: combinedTransform,
             transition:
-              imageTransform.transition ||
-              "transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
+              mouseTransform.translateX === 0 && mouseTransform.translateY === 0
+                ? "transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)"
+                : "transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
+            transformStyle: "preserve-3d",
           }}
         >
           <Image
@@ -125,6 +147,7 @@ export default function MainPage({ scrollProgress }: LandingProps) {
               opacity: taglineOpacity,
               transition: "opacity 0.3s ease-out",
             }}
+            priority
           />
         </div>
 

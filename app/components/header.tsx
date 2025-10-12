@@ -1,10 +1,30 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import React, { useState } from "react";
 
 function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const links = [
+    {
+      title: "Home",
+      link: "/",
+    },
+    {
+      title: "About",
+      link: "/About",
+    },
+    {
+      title: "Services",
+      link: "/Services",
+    },
+    {
+      title: "Contact",
+      link: "/Contact",
+    },
+  ];
 
   return (
     <>
@@ -77,12 +97,13 @@ function Header() {
       >
         <nav className="flex items-center justify-start h-full pl-[10%]">
           <ul className="space-y-8 text-white sm:text-8xl text-5xl font-semibold">
-            {["Home", "About", "Services", "Contact"].map((item, index) => (
-              <li key={item}>
+            {links.map((item, index) => (
+              <li key={item.title}>
                 {/* Overflow wrapper for reveal animation */}
                 <div className="overflow-hidden">
-                  <a
-                    href="#"
+                  <Link
+                    onClick={() => setIsMenuOpen(false)}
+                    href={item.link}
                     className="hover:text-white/70 transition-colors inline-block will-change-transform"
                     style={{
                       transform: isMenuOpen
@@ -98,8 +119,8 @@ function Header() {
                         : "0ms",
                     }}
                   >
-                    {item}
-                  </a>
+                    {item.title}
+                  </Link>
                 </div>
               </li>
             ))}

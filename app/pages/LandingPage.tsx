@@ -27,9 +27,10 @@ const SCROLL_CONFIG = {
   PROJECTS_MAX: 2.0,
   TRANSITION_DELAY: 100,
   LONG_TRANSITION_DELAY: 800,
-  MOBILE_STANDARD_DIVISOR: 600, // Reduced from 1000 for faster scrolling
-  MOBILE_PROJECTS_DIVISOR: 800, // Reduced from 1500 for faster scrolling
-  TOUCH_SENSITIVITY: 1.5, // Increased from 0.5 for more responsive touch
+  MOBILE_STANDARD_DIVISOR: 600,
+  MOBILE_PROJECTS_DIVISOR: 800,
+  TOUCH_SENSITIVITY: 1.5,
+  SECTION_THRESHOLD: 150,
 };
 
 export default function Home() {
@@ -39,6 +40,9 @@ export default function Home() {
   const [section2Progress, setSection2Progress] = useState(0);
   const [section3Progress, setSection3Progress] = useState(0);
   const [section4Progress, setSection4Progress] = useState(0);
+  const [letsTalkBuffer, setLetsTalkBuffer] = useState(0);
+  const [trustusBuffer, setTrustusBuffer] = useState(0);
+  const [leaveRequestBuffer, setLeaveRequestBuffer] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
 
   const isScrolling = useRef(false);
@@ -102,9 +106,12 @@ export default function Home() {
     (direction: number, scrollAmount: number) => {
       const scrollableSections = [
         SECTIONS.MAIN,
+        SECTIONS.LETSTALK,
         SECTIONS.TEXT_REVEAL,
         SECTIONS.WHATWEDO,
         SECTIONS.PROJECTS,
+        SECTIONS.TRUSTUS,
+        SECTIONS.LEAVEREQUEST,
       ];
 
       if (isScrolling.current && !scrollableSections.includes(currentSection)) {
@@ -131,7 +138,8 @@ export default function Home() {
           if (newProgress >= 1 && direction === 1 && !isScrolling.current) {
             transitionToSection(
               SECTIONS.LETSTALK,
-              SCROLL_CONFIG.TRANSITION_DELAY
+              SCROLL_CONFIG.TRANSITION_DELAY,
+              () => setLetsTalkBuffer(0)
             );
           }
 
@@ -140,21 +148,39 @@ export default function Home() {
         return;
       }
 
-      // Section 1: Letstalk
+      // Section 1: Letstalk - WITH BUFFER
       if (currentSection === SECTIONS.LETSTALK) {
-        if (direction === -1) {
-          setScrollProgress(1);
-          transitionToSection(
-            SECTIONS.MAIN,
-            SCROLL_CONFIG.LONG_TRANSITION_DELAY
-          );
-        } else {
-          setSection2Progress(0);
-          transitionToSection(
-            SECTIONS.TEXT_REVEAL,
-            SCROLL_CONFIG.LONG_TRANSITION_DELAY
-          );
-        }
+        setLetsTalkBuffer((prev) => {
+          const newBuffer = prev + direction * scrollAmount;
+
+          if (
+            newBuffer > SCROLL_CONFIG.SECTION_THRESHOLD &&
+            direction === 1 &&
+            !isScrolling.current
+          ) {
+            setSection2Progress(0);
+            transitionToSection(
+              SECTIONS.TEXT_REVEAL,
+              SCROLL_CONFIG.LONG_TRANSITION_DELAY
+            );
+            return 0;
+          }
+
+          if (
+            newBuffer < -SCROLL_CONFIG.SECTION_THRESHOLD &&
+            direction === -1 &&
+            !isScrolling.current
+          ) {
+            setScrollProgress(1);
+            transitionToSection(
+              SECTIONS.MAIN,
+              SCROLL_CONFIG.LONG_TRANSITION_DELAY
+            );
+            return 0;
+          }
+
+          return newBuffer;
+        });
         return;
       }
 
@@ -171,7 +197,8 @@ export default function Home() {
           if (newProgress <= 0 && direction === -1 && !isScrolling.current) {
             transitionToSection(
               SECTIONS.LETSTALK,
-              SCROLL_CONFIG.TRANSITION_DELAY
+              SCROLL_CONFIG.TRANSITION_DELAY,
+              () => setLetsTalkBuffer(0)
             );
           } else if (
             newProgress >= 1 &&
@@ -247,7 +274,8 @@ export default function Home() {
           ) {
             transitionToSection(
               SECTIONS.TRUSTUS,
-              SCROLL_CONFIG.TRANSITION_DELAY
+              SCROLL_CONFIG.TRANSITION_DELAY,
+              () => setTrustusBuffer(0)
             );
           }
 
@@ -256,31 +284,74 @@ export default function Home() {
         return;
       }
 
-      // Section 5: Trustus
+      // Section 5: Trustus - WITH BUFFER
       if (currentSection === SECTIONS.TRUSTUS) {
-        if (direction === -1) {
-          setSection4Progress(SCROLL_CONFIG.PROJECTS_MAX);
-          transitionToSection(
-            SECTIONS.PROJECTS,
-            SCROLL_CONFIG.TRANSITION_DELAY
-          );
-        } else {
-          transitionToSection(
-            SECTIONS.LEAVEREQUEST,
-            SCROLL_CONFIG.TRANSITION_DELAY
-          );
-        }
+        setTrustusBuffer((prev) => {
+          const newBuffer = prev + direction * scrollAmount;
+
+          if (
+            newBuffer < -SCROLL_CONFIG.SECTION_THRESHOLD &&
+            direction === -1 &&
+            !isScrolling.current
+          ) {
+            setSection4Progress(SCROLL_CONFIG.PROJECTS_MAX);
+            transitionToSection(
+              SECTIONS.PROJECTS,
+              SCROLL_CONFIG.TRANSITION_DELAY
+            );
+            return 0;
+          }
+
+          if (
+            newBuffer > SCROLL_CONFIG.SECTION_THRESHOLD &&
+            direction === 1 &&
+            !isScrolling.current
+          ) {
+            transitionToSection(
+              SECTIONS.LEAVEREQUEST,
+              SCROLL_CONFIG.TRANSITION_DELAY,
+              () => setLeaveRequestBuffer(0)
+            );
+            return 0;
+          }
+
+          return newBuffer;
+        });
         return;
       }
 
-      // Section 6: LEAVEREQUEST
+      // Section 6: LEAVEREQUEST - WITH BUFFER
       if (currentSection === SECTIONS.LEAVEREQUEST) {
-        if (direction === -1) {
-          setSection4Progress(SCROLL_CONFIG.PROJECTS_MAX);
-          transitionToSection(SECTIONS.TRUSTUS, SCROLL_CONFIG.TRANSITION_DELAY);
-        } else {
-          transitionToSection(SECTIONS.FOOTER, SCROLL_CONFIG.TRANSITION_DELAY);
-        }
+        setLeaveRequestBuffer((prev) => {
+          const newBuffer = prev + direction * scrollAmount;
+
+          if (
+            newBuffer < -SCROLL_CONFIG.SECTION_THRESHOLD &&
+            direction === -1 &&
+            !isScrolling.current
+          ) {
+            transitionToSection(
+              SECTIONS.TRUSTUS,
+              SCROLL_CONFIG.TRANSITION_DELAY,
+              () => setTrustusBuffer(0)
+            );
+            return 0;
+          }
+
+          if (
+            newBuffer > SCROLL_CONFIG.SECTION_THRESHOLD &&
+            direction === 1 &&
+            !isScrolling.current
+          ) {
+            transitionToSection(
+              SECTIONS.FOOTER,
+              SCROLL_CONFIG.TRANSITION_DELAY
+            );
+            return 0;
+          }
+
+          return newBuffer;
+        });
         return;
       }
 
@@ -288,7 +359,8 @@ export default function Home() {
       if (currentSection === SECTIONS.FOOTER && direction === -1) {
         transitionToSection(
           SECTIONS.LEAVEREQUEST,
-          SCROLL_CONFIG.TRANSITION_DELAY
+          SCROLL_CONFIG.TRANSITION_DELAY,
+          () => setLeaveRequestBuffer(0)
         );
         return;
       }
@@ -333,15 +405,12 @@ export default function Home() {
       const touchDelta = touchStartY.current - touchEndY;
       const timeDelta = Date.now() - touchStartTime.current;
 
-      // Calculate velocity for more natural feeling
       const velocity = Math.abs(touchDelta) / timeDelta;
 
-      // Determine direction and scroll amount
       const direction = touchDelta > 0 ? 1 : -1;
       const scrollAmount =
         Math.abs(touchDelta) * SCROLL_CONFIG.TOUCH_SENSITIVITY;
 
-      // Reduced threshold for more responsive touch (from 30 to 20)
       if (Math.abs(touchDelta) > 20) {
         handleScrollLogic(direction, scrollAmount);
       }
@@ -369,6 +438,25 @@ export default function Home() {
     };
   }, [handleScrollLogic]);
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      switch (e.key) {
+        case "ArrowDown":
+        case "PageDown":
+        case " ":
+          handleScrollLogic(1, 100);
+          break;
+        case "ArrowUp":
+        case "PageUp":
+          handleScrollLogic(-1, 100);
+          break;
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [handleScrollLogic]);
+
   return (
     <main
       ref={containerRef}
@@ -378,6 +466,7 @@ export default function Home() {
         className="transition-transform duration-700 ease-out"
         style={{
           transform: `translateY(-${currentSection * 100}vh)`,
+          pointerEvents: "auto", // Ensure pointer events work
         }}
       >
         <MainPage scrollProgress={scrollProgress} />
