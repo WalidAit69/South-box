@@ -52,7 +52,7 @@ export default function TextReveal({ scrollProgress }: TextRevealProps) {
     <section
       ref={sectionRef}
       className="custom-height
-        flex items-center justify-center 
+        flex items-center justify-center sm:pt-12 2xl:pt-0
         px-4 sm:px-6 md:px-8 lg:px-12"
     >
       <div className="max-w-[90%] mx-auto w-full">

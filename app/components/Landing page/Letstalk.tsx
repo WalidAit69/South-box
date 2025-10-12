@@ -3,7 +3,11 @@
 import React, { useState, useEffect, useRef } from "react";
 import CtaButton from "./CtaButton";
 
-function Letstalk() {
+interface LetsTalkProps {
+  scrollProgress?: number;
+}
+
+function Letstalk({ scrollProgress = 0 }: LetsTalkProps) {
   const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
 
@@ -33,6 +37,15 @@ function Letstalk() {
     };
   }, [isVisible]);
 
+  // Calculate scale based on scroll progress
+  const scale =
+    scrollProgress < 0.5
+      ? 0.9 + scrollProgress * 0.2
+      : 1 + (scrollProgress - 0.5) * 0.1;
+
+  // Calculate opacity - fades in during first half
+  const opacity = Math.min(1, scrollProgress * 2);
+
   return (
     <section
       ref={sectionRef}
@@ -40,8 +53,14 @@ function Letstalk() {
         flex flex-col lg:flex-row 
         items-center justify-center lg:justify-between
         gap-0 lg:gap-12 
-        px-4 sm:px-6 lg:px-8 
+        px-4 sm:px-6 lg:px-8
         py-[100px] lg:py-0"
+      style={{
+        transform: `scale(${scale})`,
+        opacity: opacity,
+        transition: "transform 0.1s ease-out, opacity 0.1s ease-out",
+        pointerEvents: "auto", // Add this line
+      }}
     >
       <div className="max-w-3xl overflow-hidden flex-1">
         <p
@@ -63,7 +82,7 @@ function Letstalk() {
         </p>
       </div>
 
-      <div className="flex-shrink-0">
+      <div className="flex-shrink-0" style={{ pointerEvents: "auto" }}>
         <CtaButton text="Let's talk" />
       </div>
     </section>

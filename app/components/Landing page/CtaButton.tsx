@@ -64,7 +64,7 @@ function CtaButton({ text }: props) {
         sm:w-[160px] sm:h-[160px] 
         md:w-[200px] md:h-[200px] 
         lg:w-[250px] lg:h-[250px] 
-        xl:w-[300px] xl:h-[300px] 
+        2xl:w-[300px] 2xl:h-[300px] 
         rounded-full border-2 border-white/30 hover:border-white 
         transition-all duration-300 
         flex items-center justify-center overflow-hidden"

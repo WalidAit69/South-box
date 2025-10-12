@@ -1,9 +1,12 @@
 "use client";
 
 import React, { useState } from "react";
-import CtaButton from "./CtaButton";
 
-function LeaveRequest() {
+interface LeaveRequestProps {
+  scrollProgress?: number;
+}
+
+function LeaveRequest({ scrollProgress = 0 }: LeaveRequestProps) {
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
@@ -30,8 +33,33 @@ function LeaveRequest() {
     });
   };
 
+  // Calculate scale based on scroll progress
+  const scale =
+    scrollProgress < 0.5
+      ? 0.9 + scrollProgress * 0.2
+      : 1 + (scrollProgress - 0.5) * 0.1;
+
+  // Calculate opacity - fades in during first half
+  const opacity = Math.min(1, scrollProgress * 2);
+
+  // Calculate text slide-in animation
+  const textTranslateY = (1 - Math.min(1, scrollProgress * 2)) * 30;
+  const textOpacity = Math.min(1, scrollProgress * 2.5);
+
+  // Calculate button animation (appears slightly later)
+  const buttonProgress = Math.max(0, (scrollProgress - 0.3) * 2);
+  const buttonScale = 0.8 + buttonProgress * 0.2;
+  const buttonOpacity = Math.min(1, buttonProgress);
+
   return (
-    <section className="max-w-[90%] mx-auto h-screen flex flex-col items-center justify-center pb-20 relative">
+    <section
+      className="max-w-[90%] mx-auto h-screen flex flex-col items-center justify-center pb-20 relative"
+      style={{
+        transform: `scale(${scale})`,
+        opacity: opacity,
+        transition: "transform 0.1s ease-out, opacity 0.1s ease-out",
+      }}
+    >
       {/* Initial Content */}
       <div
         className={`w-full 
@@ -51,6 +79,11 @@ function LeaveRequest() {
           className="max-w-3xl overflow-hidden 
           text-center lg:text-left 
           w-full lg:w-auto"
+          style={{
+            transform: `translateY(${textTranslateY}px)`,
+            opacity: textOpacity,
+            transition: "transform 0.1s ease-out, opacity 0.1s ease-out",
+          }}
         >
           <div
             className="group flex items-center gap-2 
@@ -68,14 +101,24 @@ function LeaveRequest() {
             className="text-lg sm:text-xl md:text-2xl lg:text-[2rem] 
             font-light leading-relaxed will-change-transform"
           >
-            We&apos;d love to be challenged by you! Feel free to share your brief
-            with us.
+            We&apos;d love to be challenged by you! Feel free to share your
+            brief with us.
           </p>
         </div>
 
-        <div className="flex-shrink-0">
+        <div
+          className="flex-shrink-0"
+          style={{
+            transform: `scale(${buttonScale})`,
+            opacity: buttonOpacity,
+            transition: "transform 0.1s ease-out, opacity 0.1s ease-out",
+          }}
+        >
           <div onClick={() => setShowForm(true)}>
-            <CtaButton text="Let's start your project" />
+            {/* CtaButton placeholder - replace with your actual component */}
+            <button className="px-8 py-4 bg-white text-black rounded-full font-medium hover:bg-white/90 transition-colors">
+              Let&apos;s start your project
+            </button>
           </div>
         </div>
       </div>

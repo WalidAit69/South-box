@@ -168,7 +168,7 @@ body {
 /* Small height screens (landscape mobile, short windows) */
 @media (max-height: 600px) {
   .hero-heading {
-    font-size: clamp(15rem, 20vw, 10rem);
+    font-size: clamp(13rem, 20vw, 10rem);
   }
 }
 
@@ -211,7 +211,7 @@ body {
 /* Adjust for short screens */
 @media (max-height: 600px) {
   .hero-tagline {
-    margin-bottom: 1rem;
+    margin-bottom: 3rem;
     font-size: clamp(0.75rem, 1.8vw, 1rem);
   }
 }

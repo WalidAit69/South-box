@@ -115,7 +115,7 @@ export default function MainPage({ scrollProgress }: LandingProps) {
       <div className="relative z-10 w-full">
         {/* CTA Button - Responsive positioning */}
         <div
-          className="absolute right-0 -top-30 lg:top-[40%] lg:right-[70%] transition-all duration-300 z-20 2xl:right-0 2xl:top-2"
+          className="absolute right-0 -top-30 lg:top-[40%] lg:right-[70%] transition-all duration-300 z-20 xl:right-0 xl:top-2"
           style={{
             opacity: isLoaded ? taglineOpacity : 0,
             transitionDuration: isLoaded ? "1s, 2s" : "0s",

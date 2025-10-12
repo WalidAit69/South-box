@@ -65,83 +65,84 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = () => {
   ];
 
   return (
-    <section
-      className="max-w-[95%] sm:max-w-[92%] md:max-w-[90%]
-      mx-auto h-screen 
+    <section className="h-screen max-w-[90%] mx-auto">
+      <div
+        className="h-full
       w-full text-white relative overflow-hidden
       px-2 sm:px-4 md:px-6"
-    >
-      <ScrollStack
-        className="h-full scrollbar-hide"
-        itemDistance={80}
-        itemScale={0.04}
-        itemStackDistance={25}
-        stackPosition="30%"
-        scaleEndPosition="15%"
-        baseScale={0.8}
-        rotationAmount={0}
-        blurAmount={2}
       >
-        {projects.map((project, index) => (
-          <ScrollStackItem
-            key={index}
-            itemClassName={`${project.color} ${project.text}`}
-          >
-            <div
-              className="flex flex-col justify-between h-full 
-              p-4 sm:p-6 md:p-8 lg:p-10"
+        <ScrollStack
+          className="h-full scrollbar-hide"
+          itemDistance={80}
+          itemScale={0.02}
+          itemStackDistance={25}
+          stackPosition="30%"
+          scaleEndPosition="15%"
+          baseScale={0.7}
+          rotationAmount={0}
+          blurAmount={2}
+        >
+          {projects.map((project, index) => (
+            <ScrollStackItem
+              key={index}
+              itemClassName={`${project.color} ${project.text}`}
             >
-              <div>
-                <span
-                  className="text-[10px] sm:text-xs md:text-sm 
+              <div
+                className="flex flex-col justify-between h-full 
+              p-4 sm:p-6 md:p-8 lg:p-10"
+              >
+                <div>
+                  <span
+                    className="text-[10px] sm:text-xs md:text-sm 
                   font-semibold opacity-80 uppercase tracking-wider"
-                >
-                  {project.category}
-                </span>
-                <h3
-                  className="text-xl sm:text-2xl md:text-3xl lg:text-4xl 
+                  >
+                    {project.category}
+                  </span>
+                  <h3
+                    className="text-xl sm:text-2xl md:text-3xl lg:text-4xl 
                   font-bold 
                   mt-2 sm:mt-3 md:mt-4
                   leading-tight"
-                >
-                  {project.title}
-                </h3>
-                <p
-                  className="text-sm sm:text-base md:text-lg lg:text-xl 
+                  >
+                    {project.title}
+                  </h3>
+                  <p
+                    className="text-sm sm:text-base md:text-lg lg:text-xl 
                   mt-2 sm:mt-3 md:mt-4 
                   opacity-90
                   leading-relaxed
                   max-w-2xl"
-                >
-                  {project.description}
-                </p>
-              </div>
-              <div
-                className="flex flex-col sm:flex-row 
+                  >
+                    {project.description}
+                  </p>
+                </div>
+                <div
+                  className="flex flex-col sm:flex-row 
                 items-start sm:items-center 
                 justify-between 
                 gap-3 sm:gap-4 
                 mt-6"
-              >
-                <span className="text-xs sm:text-sm opacity-70">
-                  Project {index + 1} of {projects.length}
-                </span>
-                <button
-                  className="px-4 sm:px-5 md:px-6 
+                >
+                  <span className="text-xs sm:text-sm opacity-70">
+                    Project {index + 1} of {projects.length}
+                  </span>
+                  <button
+                    className="px-4 sm:px-5 md:px-6 
                   py-1.5 sm:py-2 
                   text-xs sm:text-sm md:text-base
                   bg-white/20 hover:bg-white/30 
                   rounded-full backdrop-blur-sm 
                   transition-all
                   whitespace-nowrap"
-                >
-                  View Details
-                </button>
+                  >
+                    View Details
+                  </button>
+                </div>
               </div>
-            </div>
-          </ScrollStackItem>
-        ))}
-      </ScrollStack>
+            </ScrollStackItem>
+          ))}
+        </ScrollStack>
+      </div>
     </section>
   );
 };

@@ -3,12 +3,12 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import MainPage from "../components/Landing page/MainPage";
 import Letstalk from "../components/Landing page/Letstalk";
-import WhatwedoPage from "../components/Landing page/WhatwedoPage";
 import TextReveal from "../components/Landing page/TextReveal";
+import WhatwedoPage from "../components/Landing page/WhatwedoPage";
 import ProjectsSection from "../components/Landing page/ProjectsSection";
 import TrustusPage from "../components/Landing page/TrustusPage";
-import Footer from "../components/Footer";
 import LeaveRequest from "../components/Landing page/LeaveRequest";
+import Footer from "../components/Footer";
 
 const SECTIONS = {
   MAIN: 0,
@@ -30,19 +30,18 @@ const SCROLL_CONFIG = {
   MOBILE_STANDARD_DIVISOR: 600,
   MOBILE_PROJECTS_DIVISOR: 800,
   TOUCH_SENSITIVITY: 1.5,
-  SECTION_THRESHOLD: 150,
 };
 
 export default function Home() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [currentSection, setCurrentSection] = useState(SECTIONS.MAIN);
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [letsTalkProgress, setLetsTalkProgress] = useState(0);
   const [section2Progress, setSection2Progress] = useState(0);
   const [section3Progress, setSection3Progress] = useState(0);
   const [section4Progress, setSection4Progress] = useState(0);
-  const [letsTalkBuffer, setLetsTalkBuffer] = useState(0);
-  const [trustusBuffer, setTrustusBuffer] = useState(0);
-  const [leaveRequestBuffer, setLeaveRequestBuffer] = useState(0);
+  const [trustusProgress, setTrustusProgress] = useState(0);
+  const [leaveRequestProgress, setLeaveRequestProgress] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
 
   const isScrolling = useRef(false);
@@ -139,7 +138,7 @@ export default function Home() {
             transitionToSection(
               SECTIONS.LETSTALK,
               SCROLL_CONFIG.TRANSITION_DELAY,
-              () => setLetsTalkBuffer(0)
+              () => setLetsTalkProgress(0)
             );
           }
 
@@ -148,38 +147,35 @@ export default function Home() {
         return;
       }
 
-      // Section 1: Letstalk - WITH BUFFER
+      // Section 1: Letstalk
       if (currentSection === SECTIONS.LETSTALK) {
-        setLetsTalkBuffer((prev) => {
-          const newBuffer = prev + direction * scrollAmount;
+        setLetsTalkProgress((prev) => {
+          const newProgress = updateProgress(
+            prev,
+            scrollAmount,
+            direction,
+            standardDivisor
+          );
 
-          if (
-            newBuffer > SCROLL_CONFIG.SECTION_THRESHOLD &&
+          if (newProgress <= 0 && direction === -1 && !isScrolling.current) {
+            transitionToSection(
+              SECTIONS.MAIN,
+              SCROLL_CONFIG.LONG_TRANSITION_DELAY,
+              () => setScrollProgress(1)
+            );
+          } else if (
+            newProgress >= 1 &&
             direction === 1 &&
             !isScrolling.current
           ) {
-            setSection2Progress(0);
             transitionToSection(
               SECTIONS.TEXT_REVEAL,
-              SCROLL_CONFIG.LONG_TRANSITION_DELAY
+              SCROLL_CONFIG.LONG_TRANSITION_DELAY,
+              () => setSection2Progress(0)
             );
-            return 0;
           }
 
-          if (
-            newBuffer < -SCROLL_CONFIG.SECTION_THRESHOLD &&
-            direction === -1 &&
-            !isScrolling.current
-          ) {
-            setScrollProgress(1);
-            transitionToSection(
-              SECTIONS.MAIN,
-              SCROLL_CONFIG.LONG_TRANSITION_DELAY
-            );
-            return 0;
-          }
-
-          return newBuffer;
+          return newProgress;
         });
         return;
       }
@@ -198,7 +194,7 @@ export default function Home() {
             transitionToSection(
               SECTIONS.LETSTALK,
               SCROLL_CONFIG.TRANSITION_DELAY,
-              () => setLetsTalkBuffer(0)
+              () => setLetsTalkProgress(1)
             );
           } else if (
             newProgress >= 1 &&
@@ -275,7 +271,7 @@ export default function Home() {
             transitionToSection(
               SECTIONS.TRUSTUS,
               SCROLL_CONFIG.TRANSITION_DELAY,
-              () => setTrustusBuffer(0)
+              () => setTrustusProgress(0)
             );
           }
 
@@ -284,62 +280,57 @@ export default function Home() {
         return;
       }
 
-      // Section 5: Trustus - WITH BUFFER
+      // Section 5: Trustus
       if (currentSection === SECTIONS.TRUSTUS) {
-        setTrustusBuffer((prev) => {
-          const newBuffer = prev + direction * scrollAmount;
+        setTrustusProgress((prev) => {
+          const newProgress = updateProgress(
+            prev,
+            scrollAmount,
+            direction,
+            standardDivisor
+          );
 
-          if (
-            newBuffer < -SCROLL_CONFIG.SECTION_THRESHOLD &&
-            direction === -1 &&
-            !isScrolling.current
-          ) {
-            setSection4Progress(SCROLL_CONFIG.PROJECTS_MAX);
+          if (newProgress <= 0 && direction === -1 && !isScrolling.current) {
             transitionToSection(
               SECTIONS.PROJECTS,
-              SCROLL_CONFIG.TRANSITION_DELAY
+              SCROLL_CONFIG.TRANSITION_DELAY,
+              () => setSection4Progress(SCROLL_CONFIG.PROJECTS_MAX)
             );
-            return 0;
-          }
-
-          if (
-            newBuffer > SCROLL_CONFIG.SECTION_THRESHOLD &&
+          } else if (
+            newProgress >= 1 &&
             direction === 1 &&
             !isScrolling.current
           ) {
             transitionToSection(
               SECTIONS.LEAVEREQUEST,
               SCROLL_CONFIG.TRANSITION_DELAY,
-              () => setLeaveRequestBuffer(0)
+              () => setLeaveRequestProgress(0)
             );
-            return 0;
           }
 
-          return newBuffer;
+          return newProgress;
         });
         return;
       }
 
-      // Section 6: LEAVEREQUEST - WITH BUFFER
+      // Section 6: LEAVEREQUEST
       if (currentSection === SECTIONS.LEAVEREQUEST) {
-        setLeaveRequestBuffer((prev) => {
-          const newBuffer = prev + direction * scrollAmount;
+        setLeaveRequestProgress((prev) => {
+          const newProgress = updateProgress(
+            prev,
+            scrollAmount,
+            direction,
+            standardDivisor
+          );
 
-          if (
-            newBuffer < -SCROLL_CONFIG.SECTION_THRESHOLD &&
-            direction === -1 &&
-            !isScrolling.current
-          ) {
+          if (newProgress <= 0 && direction === -1 && !isScrolling.current) {
             transitionToSection(
               SECTIONS.TRUSTUS,
               SCROLL_CONFIG.TRANSITION_DELAY,
-              () => setTrustusBuffer(0)
+              () => setTrustusProgress(1)
             );
-            return 0;
-          }
-
-          if (
-            newBuffer > SCROLL_CONFIG.SECTION_THRESHOLD &&
+          } else if (
+            newProgress >= 1 &&
             direction === 1 &&
             !isScrolling.current
           ) {
@@ -347,10 +338,9 @@ export default function Home() {
               SECTIONS.FOOTER,
               SCROLL_CONFIG.TRANSITION_DELAY
             );
-            return 0;
           }
 
-          return newBuffer;
+          return newProgress;
         });
         return;
       }
@@ -360,7 +350,7 @@ export default function Home() {
         transitionToSection(
           SECTIONS.LEAVEREQUEST,
           SCROLL_CONFIG.TRANSITION_DELAY,
-          () => setLeaveRequestBuffer(0)
+          () => setLeaveRequestProgress(1)
         );
         return;
       }
@@ -403,9 +393,6 @@ export default function Home() {
     const handleTouchEnd = (e: TouchEvent) => {
       const touchEndY = e.changedTouches[0].clientY;
       const touchDelta = touchStartY.current - touchEndY;
-      const timeDelta = Date.now() - touchStartTime.current;
-
-      const velocity = Math.abs(touchDelta) / timeDelta;
 
       const direction = touchDelta > 0 ? 1 : -1;
       const scrollAmount =
@@ -444,10 +431,12 @@ export default function Home() {
         case "ArrowDown":
         case "PageDown":
         case " ":
+          e.preventDefault();
           handleScrollLogic(1, 100);
           break;
         case "ArrowUp":
         case "PageUp":
+          e.preventDefault();
           handleScrollLogic(-1, 100);
           break;
       }
@@ -466,17 +455,70 @@ export default function Home() {
         className="transition-transform duration-700 ease-out"
         style={{
           transform: `translateY(-${currentSection * 100}vh)`,
-          pointerEvents: "auto", // Ensure pointer events work
         }}
       >
-        <MainPage scrollProgress={scrollProgress} />
-        <Letstalk />
-        <TextReveal scrollProgress={section2Progress} />
-        <WhatwedoPage scrollProgress={section3Progress} />
-        <ProjectsSection scrollProgress={section4Progress} />
-        <TrustusPage />
-        <LeaveRequest />
-        <Footer />
+        <div
+          style={{
+            pointerEvents: currentSection === SECTIONS.MAIN ? "auto" : "none",
+          }}
+        >
+          <MainPage scrollProgress={scrollProgress} />
+        </div>
+        <div
+          style={{
+            pointerEvents:
+              currentSection === SECTIONS.LETSTALK ? "auto" : "none",
+          }}
+        >
+          <Letstalk scrollProgress={letsTalkProgress} />
+        </div>
+        <div
+          style={{
+            pointerEvents:
+              currentSection === SECTIONS.TEXT_REVEAL ? "auto" : "none",
+          }}
+        >
+          <TextReveal scrollProgress={section2Progress} />
+        </div>
+        <div
+          style={{
+            pointerEvents:
+              currentSection === SECTIONS.WHATWEDO ? "auto" : "none",
+          }}
+        >
+          <WhatwedoPage scrollProgress={section3Progress} />
+        </div>
+        <div
+          style={{
+            pointerEvents:
+              currentSection === SECTIONS.PROJECTS ? "auto" : "none",
+          }}
+        >
+          <ProjectsSection scrollProgress={section4Progress} />
+        </div>
+        <div
+          style={{
+            pointerEvents:
+              currentSection === SECTIONS.TRUSTUS ? "auto" : "none",
+          }}
+        >
+          <TrustusPage scrollProgress={trustusProgress} />
+        </div>
+        <div
+          style={{
+            pointerEvents:
+              currentSection === SECTIONS.LEAVEREQUEST ? "auto" : "none",
+          }}
+        >
+          <LeaveRequest scrollProgress={leaveRequestProgress} />
+        </div>
+        <div
+          style={{
+            pointerEvents: currentSection === SECTIONS.FOOTER ? "auto" : "none",
+          }}
+        >
+          <Footer />
+        </div>
       </div>
     </main>
   );

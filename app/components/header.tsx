@@ -29,7 +29,9 @@ function Header() {
   return (
     <>
       <header className="bg-[#0a0a0a] max-w-[90%] m-auto flex items-center justify-between h-[70px] relative z-50">
-        <Image src="/southbox2.png" alt="logo" width={100} height={100} />
+        <Link href="/">
+          <Image src="/southbox2.png" alt="logo" width={100} height={100} />
+        </Link>
 
         <button
           onClick={() => setIsMenuOpen(!isMenuOpen)}

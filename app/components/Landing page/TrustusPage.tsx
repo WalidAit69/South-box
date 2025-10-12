@@ -1,25 +1,67 @@
+import Image from "next/image";
 import React from "react";
 
-function TrustusPage() {
-  const companies = [
-    { name: "Company 1", bgColor: "bg-white" },
-    { name: "Company 2", bgColor: "bg-white" },
-    { name: "Company 3", bgColor: "bg-white" },
-    { name: "Company 4", bgColor: "bg-white" },
-    { name: "Company 5", bgColor: "bg-white" },
-    { name: "Company 6", bgColor: "bg-white" },
-    { name: "Company 7", bgColor: "bg-white" },
-    { name: "Company 8", bgColor: "bg-white" },
-    { name: "Company 9", bgColor: "bg-white" },
-    { name: "Company 10", bgColor: "bg-white" },
-    { name: "Company 11", bgColor: "bg-white" },
-    { name: "Company 12", bgColor: "bg-white" },
+interface TrustusPageProps {
+  scrollProgress?: number;
+}
+
+function TrustusPage({ scrollProgress = 0 }: TrustusPageProps) {
+  const images = [
+    "/images/bayer.svg",
+    "/images/brother-1.svg",
+    "/images/gl-events.svg",
+    "/images/lavazza.svg",
+    "/images/navya.svg",
+    "/images/pizza-hut-1.svg",
+    "/images/saintgobain.svg",
+    "/images/toolstation.svg",
   ];
 
+  // Calculate scale based on scroll progress
+  // Starts at 0.9, reaches 1 at progress 0.5, then scales to 1.05 at progress 1
+  const scale =
+    scrollProgress < 0.5
+      ? 0.9 + scrollProgress * 0.2
+      : 1 + (scrollProgress - 0.5) * 0.1;
+
+  // Calculate opacity - fades in during first half
+  const opacity = Math.min(1, scrollProgress * 2);
+
+  // Calculate individual company animations based on scroll progress
+  const getCompanyStyle = (index: number) => {
+    // Each company animates in sequence
+    const delay = index * 0.08; // Staggered delay
+    const itemProgress = Math.max(0, Math.min(1, (scrollProgress - delay) * 2));
+
+    return {
+      opacity: itemProgress,
+      transform: `translateY(${(1 - itemProgress) * 30}px) scale(${
+        0.8 + itemProgress * 0.2
+      })`,
+      transition: "opacity 0.1s ease-out, transform 0.1s ease-out",
+    };
+  };
+
   return (
-    <section className="h-screen flex flex-col items-center justify-center gap-20 pb-20">
+    <section
+      className="h-screen max-w-[90%] mx-auto flex flex-col items-center justify-center gap-20 pb-20 lg:pt-20 2xl:pt-0"
+      style={{
+        transform: `scale(${scale})`,
+        opacity: opacity,
+        transition: "transform 0.1s ease-out, opacity 0.1s ease-out",
+      }}
+    >
       {/* Header */}
-      <div className="text-center animate-fadeIn">
+      <div
+        className="text-center"
+        style={{
+          opacity: Math.min(1, scrollProgress * 3),
+          transform: `translateY(${
+            (1 - Math.min(1, scrollProgress * 3)) * 20
+          }px)`,
+          transition: "opacity 0.1s ease-out, transform 0.1s ease-out",
+        }}
+      >
         <h2
           className="text-3xl sm:text-4xl md:text-5xl lg:text-5xl 
           font-semibold
@@ -31,12 +73,12 @@ function TrustusPage() {
 
       {/* Companies Grid */}
       <div
-        className="max-w-7xl w-full 
-        grid grid-cols-3 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-6 
+        className="w-full 
+        grid grid-cols-3 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-4 
         gap-4 sm:gap-5 md:gap-6 lg:gap-8 xl:gap-10
         place-items-center"
       >
-        {companies.map((company, index) => (
+        {images.map((img, index) => (
           <div
             key={index}
             className="w-16 h-16 
@@ -45,33 +87,10 @@ function TrustusPage() {
               lg:w-24 lg:h-24
               group relative rounded-xl sm:rounded-2xl 
               shadow-lg hover:shadow-2xl 
-              transition-all duration-300 hover:-translate-y-2"
-            style={{
-              animation: `fadeInUp 0.6s ease-out ${index * 0.1}s both`,
-            }}
+              transition-all duration-500"
+            style={getCompanyStyle(index)}
           >
-            {/* Placeholder for company logo */}
-            <div
-              className={`${company.bgColor} w-full h-full rounded-xl 
-                flex items-center justify-center 
-                transition-transform duration-300 group-hover:scale-105`}
-            >
-              <span
-                className="text-black 
-                text-xl sm:text-2xl md:text-3xl 
-                font-bold"
-              >
-                {company.name.charAt(0)}
-              </span>
-            </div>
-
-            {/* Hover effect overlay */}
-            <div
-              className="absolute inset-0 
-              bg-gradient-to-br from-amber-400/0 to-orange-400/0 
-              group-hover:from-amber-400/10 group-hover:to-orange-400/10 
-              transition-all duration-300 rounded-xl sm:rounded-2xl"
-            />
+            <Image src={img} alt="company" width={300} height={300} />
           </div>
         ))}
       </div>
