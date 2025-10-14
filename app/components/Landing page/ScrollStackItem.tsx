@@ -4,21 +4,35 @@ import Lenis from "lenis";
 export interface ScrollStackItemProps {
   itemClassName?: string;
   children: ReactNode;
+  itemIndex?: number;
+  itemTitle?: string;
 }
 
 export const ScrollStackItem: React.FC<ScrollStackItemProps> = ({
   children,
   itemClassName = "",
+  itemIndex,
+  itemTitle,
 }) => (
-  <div
+  <article
     className={`scroll-stack-card relative w-full h-80 my-8 p-12 rounded-[40px] shadow-[0_0_30px_rgba(0,0,0,0.1)] box-border origin-top will-change-transform ${itemClassName}`.trim()}
     style={{
       backfaceVisibility: "hidden",
       transformStyle: "preserve-3d",
     }}
+    itemScope
+    itemType="https://schema.org/CreativeWork"
+    aria-label={
+      itemTitle
+        ? `${itemTitle} - Item ${itemIndex !== undefined ? itemIndex + 1 : ""}`
+        : undefined
+    }
   >
+    {itemIndex !== undefined && (
+      <meta itemProp="position" content={String(itemIndex + 1)} />
+    )}
     {children}
-  </div>
+  </article>
 );
 
 interface ScrollStackProps {
@@ -358,6 +372,8 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
     <div
       className={`relative w-full h-full overflow-y-auto overflow-x-visible ${className}`.trim()}
       ref={scrollerRef}
+      role="region"
+      aria-label="Scrollable content stack"
       style={{
         overscrollBehavior: "contain",
         WebkitOverflowScrolling: "touch",
@@ -367,10 +383,14 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
         willChange: "scroll-position",
       }}
     >
-      <div className="scroll-stack-inner pt-[20vh] sm:px-20 pb-[50rem] min-h-screen">
+      <div
+        className="scroll-stack-inner pt-[20vh] sm:px-20 pb-[50rem] min-h-screen"
+        itemScope
+        itemType="https://schema.org/ItemList"
+      >
         {children}
         {/* Spacer so the last pin can release cleanly */}
-        <div className="scroll-stack-end w-full h-px" />
+        <div className="scroll-stack-end w-full h-px" aria-hidden="true" />
       </div>
     </div>
   );

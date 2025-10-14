@@ -10,6 +10,115 @@ export default function ServicesPage() {
   const containerRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
+  // Add JSON-LD structured data for services
+  useEffect(() => {
+    const servicesStructuredData = {
+      "@context": "https://schema.org",
+      "@type": "Service",
+      serviceType: "Digital Creative Agency Services",
+      provider: {
+        "@type": "Organization",
+        name: "South Box",
+        url: "https://yourdomain.com",
+      },
+      areaServed: "Worldwide",
+      hasOfferCatalog: {
+        "@type": "OfferCatalog",
+        name: "Digital Services",
+        itemListElement: [
+          {
+            "@type": "Offer",
+            itemOffered: {
+              "@type": "Service",
+              name: "Brand Identity Design",
+              description:
+                "Crafting unique visual identities that capture your essence and resonate with your audience",
+            },
+          },
+          {
+            "@type": "Offer",
+            itemOffered: {
+              "@type": "Service",
+              name: "Web Development",
+              description:
+                "Building lightning-fast, responsive websites that convert visitors into customers",
+            },
+          },
+          {
+            "@type": "Offer",
+            itemOffered: {
+              "@type": "Service",
+              name: "Mobile App Development",
+              description:
+                "Creating seamless mobile experiences that users love and return to daily",
+            },
+          },
+          {
+            "@type": "Offer",
+            itemOffered: {
+              "@type": "Service",
+              name: "Motion Design",
+              description:
+                "Bringing your brand to life with captivating animations and video content",
+            },
+          },
+          {
+            "@type": "Offer",
+            itemOffered: {
+              "@type": "Service",
+              name: "Digital Marketing",
+              description:
+                "Data-driven strategies that amplify your reach and maximize ROI",
+            },
+          },
+          {
+            "@type": "Offer",
+            itemOffered: {
+              "@type": "Service",
+              name: "UI/UX Design",
+              description:
+                "Designing intuitive interfaces that delight users and drive engagement",
+            },
+          },
+        ],
+      },
+    };
+
+    const breadcrumbStructuredData = {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        {
+          "@type": "ListItem",
+          position: 1,
+          name: "Home",
+          item: "https://yourdomain.com",
+        },
+        {
+          "@type": "ListItem",
+          position: 2,
+          name: "Services",
+          item: "https://yourdomain.com/services",
+        },
+      ],
+    };
+
+    const script1 = document.createElement("script");
+    script1.type = "application/ld+json";
+    script1.text = JSON.stringify(servicesStructuredData);
+    document.head.appendChild(script1);
+
+    const script2 = document.createElement("script");
+    script2.type = "application/ld+json";
+    script2.text = JSON.stringify(breadcrumbStructuredData);
+    document.head.appendChild(script2);
+
+    return () => {
+      document.head.removeChild(script1);
+      document.head.removeChild(script2);
+    };
+  }, []);
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoaded(true);
@@ -171,7 +280,10 @@ export default function ServicesPage() {
       className="bg-[#0a0a0a] max-w-[90%] mx-auto text-white min-h-screen"
     >
       {/* Hero Section */}
-      <section className="min-h-screen flex items-center sm:items-start justify-center px-4 sm:mt-20 pb-20 sm:pb-0">
+      <section
+        className="min-h-screen flex items-center sm:items-start justify-center px-4 sm:mt-20 pb-20 sm:pb-0"
+        aria-label="Services Hero Section"
+      >
         <div
           className="max-w-6xl mx-auto text-center"
           style={{ opacity: heroOpacity }}
@@ -186,6 +298,7 @@ export default function ServicesPage() {
                   "opacity 0.8s ease-out, transform 1s cubic-bezier(0.16, 1, 0.3, 1)",
                 transitionDelay: "0.2s",
               }}
+              aria-hidden="true"
             ></div>
             <span
               className="text-sm sm:text-base uppercase tracking-wider"
@@ -234,7 +347,10 @@ export default function ServicesPage() {
           </div>
 
           {/* Floating geometric shapes */}
-          <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-20">
+          <div
+            className="absolute inset-0 overflow-hidden pointer-events-none opacity-20"
+            aria-hidden="true"
+          >
             <div className="absolute top-20 left-10 w-20 h-20 border border-amber-500 rotate-12 animate-pulse"></div>
             <div
               className="absolute bottom-40 right-20 w-16 h-16 border border-cyan-500 -rotate-12 animate-pulse"
@@ -249,7 +365,12 @@ export default function ServicesPage() {
       </section>
 
       {/* Services Grid */}
-      <section className="min-h-screen flex items-center justify-center px-4 py-20">
+      <section
+        className="min-h-screen flex items-center justify-center px-4 py-20"
+        aria-label="Our Services"
+        itemScope
+        itemType="https://schema.org/ItemList"
+      >
         <div
           className="max-w-7xl mx-auto w-full"
           style={{ opacity: servicesOpacity }}
@@ -270,7 +391,7 @@ export default function ServicesPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             {services.map((service, index) => (
-              <div
+              <article
                 key={index}
                 className="group relative bg-white/5 backdrop-blur-sm border border-white/10 rounded-3xl p-8 hover:bg-white/10 transition-all duration-500 overflow-hidden"
                 style={{
@@ -279,49 +400,76 @@ export default function ServicesPage() {
                   transitionDelay: `${index * 100}ms`,
                 }}
                 onMouseEnter={() => setActiveService(index)}
+                itemScope
+                itemType="https://schema.org/Service"
+                itemProp="itemListElement"
               >
                 {/* Gradient background on hover */}
                 <div
                   className={`absolute inset-0 bg-gradient-to-br ${service.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-500`}
+                  aria-hidden="true"
                 ></div>
 
                 <div className="relative z-10">
-                  <div className="text-5xl sm:text-6xl mb-6 transform group-hover:scale-110 group-hover:rotate-12 transition-all duration-300">
+                  <div
+                    className="text-5xl sm:text-6xl mb-6 transform group-hover:scale-110 group-hover:rotate-12 transition-all duration-300"
+                    aria-hidden="true"
+                  >
                     {service.icon}
                   </div>
 
-                  <h3 className="text-2xl sm:text-3xl font-bold mb-4">
+                  <h3
+                    className="text-2xl sm:text-3xl font-bold mb-4"
+                    itemProp="name"
+                  >
                     {service.title}
                   </h3>
 
-                  <p className="text-white/70 mb-6 leading-relaxed">
+                  <p
+                    className="text-white/70 mb-6 leading-relaxed"
+                    itemProp="description"
+                  >
                     {service.description}
                   </p>
 
-                  <div className="space-y-2">
+                  <ul
+                    className="space-y-2"
+                    itemProp="offers"
+                    itemScope
+                    itemType="https://schema.org/AggregateOffer"
+                  >
                     {service.features.map((feature, idx) => (
-                      <div
+                      <li
                         key={idx}
                         className="flex items-center gap-2 text-sm text-white/60"
                       >
-                        <div className="w-1.5 h-1.5 bg-gradient-to-r from-amber-400 to-orange-500 rounded-full"></div>
+                        <div
+                          className="w-1.5 h-1.5 bg-gradient-to-r from-amber-400 to-orange-500 rounded-full"
+                          aria-hidden="true"
+                        ></div>
                         {feature}
-                      </div>
+                      </li>
                     ))}
-                  </div>
+                  </ul>
 
-                  <button className="mt-6 px-6 py-2 bg-white/10 hover:bg-white/20 rounded-full text-sm font-medium transition-all duration-300 group-hover:translate-x-2">
+                  <button
+                    className="mt-6 px-6 py-2 bg-white/10 hover:bg-white/20 rounded-full text-sm font-medium transition-all duration-300 group-hover:translate-x-2"
+                    aria-label={`Learn more about ${service.title}`}
+                  >
                     Learn More →
                   </button>
                 </div>
-              </div>
+              </article>
             ))}
           </div>
         </div>
       </section>
 
       {/* Process Section */}
-      <section className="min-h-screen flex items-center justify-center px-4 py-20">
+      <section
+        className="min-h-screen flex items-center justify-center px-4 py-20"
+        aria-label="Our Process"
+      >
         <div
           className="max-w-6xl mx-auto w-full"
           style={{ opacity: processOpacity }}
@@ -338,9 +486,9 @@ export default function ServicesPage() {
             </h2>
           </div>
 
-          <div className="space-y-8">
+          <ol className="space-y-8">
             {process.map((step, index) => (
-              <div
+              <li
                 key={index}
                 className="group relative"
                 style={{
@@ -355,14 +503,20 @@ export default function ServicesPage() {
               >
                 <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-6 bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 sm:p-8 hover:bg-white/10 transition-all duration-500">
                   <div className="flex-shrink-0">
-                    <div className="text-4xl sm:text-5xl md:text-6xl">
+                    <div
+                      className="text-4xl sm:text-5xl md:text-6xl"
+                      aria-hidden="true"
+                    >
                       {step.icon}
                     </div>
                   </div>
 
                   <div className="flex-grow w-full">
                     <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mb-3">
-                      <span className="text-3xl sm:text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500">
+                      <span
+                        className="text-3xl sm:text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500"
+                        aria-label={`Step ${step.number}`}
+                      >
                         {step.number}
                       </span>
                       <h3 className="text-xl sm:text-2xl md:text-3xl font-bold">
@@ -376,18 +530,21 @@ export default function ServicesPage() {
                 </div>
 
                 {index < process.length - 1 && (
-                  <div className="flex justify-center my-4">
+                  <div className="flex justify-center my-4" aria-hidden="true">
                     <div className="w-0.5 h-8 bg-gradient-to-b from-amber-400 to-transparent"></div>
                   </div>
                 )}
-              </div>
+              </li>
             ))}
-          </div>
+          </ol>
         </div>
       </section>
 
       {/* Why Choose Us */}
-      <section className="min-h-screen flex items-center justify-center px-4 py-20">
+      <section
+        className="min-h-screen flex items-center justify-center px-4 py-20"
+        aria-label="Why Choose Us"
+      >
         <div
           className="max-w-6xl mx-auto w-full"
           style={{ opacity: whyUsOpacity }}
@@ -404,9 +561,9 @@ export default function ServicesPage() {
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {whyUs.map((item, index) => (
-              <div
+              <li
                 key={index}
                 className="flex items-center gap-4 bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:bg-white/10 hover:scale-105 transition-all duration-500"
                 style={{
@@ -415,16 +572,21 @@ export default function ServicesPage() {
                   transitionDelay: `${index * 100}ms`,
                 }}
               >
-                <div className="text-4xl">{item.icon}</div>
+                <div className="text-4xl" aria-hidden="true">
+                  {item.icon}
+                </div>
                 <div className="text-lg font-semibold">{item.title}</div>
-              </div>
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="min-h-screen flex items-center justify-center px-4 py-20">
+      <section
+        className="min-h-screen flex items-center justify-center px-4 py-20"
+        aria-label="Call to Action"
+      >
         <div
           className="max-w-4xl mx-auto text-center"
           style={{ opacity: ctaOpacity }}
@@ -447,8 +609,9 @@ export default function ServicesPage() {
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <button
-              onClick={() => router.push("/")}
+              onClick={() => router.push("/Contact")}
               className="px-8 sm:px-12 py-4 sm:py-5 text-base sm:text-lg bg-white text-black font-semibold rounded-full hover:bg-white/90 transition-all duration-300 transform hover:scale-105"
+              aria-label="Get started with South Box"
             >
               Get Started
             </button>

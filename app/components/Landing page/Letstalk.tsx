@@ -9,7 +9,7 @@ interface LetsTalkProps {
 
 function Letstalk({ scrollProgress = 0 }: LetsTalkProps) {
   const [isVisible, setIsVisible] = useState(false);
-  const sectionRef = useRef<HTMLElement>(null);
+  const sectionRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -47,7 +47,7 @@ function Letstalk({ scrollProgress = 0 }: LetsTalkProps) {
   const opacity = Math.min(1, scrollProgress * 2);
 
   return (
-    <section
+    <div
       ref={sectionRef}
       className="max-w-[90%] z-10 m-auto h-[100vh] lg:mt-0
         flex flex-col lg:flex-row 
@@ -59,11 +59,14 @@ function Letstalk({ scrollProgress = 0 }: LetsTalkProps) {
         transform: `scale(${scale})`,
         opacity: opacity,
         transition: "transform 0.1s ease-out, opacity 0.1s ease-out",
-        pointerEvents: "auto", // Add this line
+        pointerEvents: "auto",
       }}
+      itemScope
+      itemType="https://schema.org/Service"
+      aria-label="Our Services Overview"
     >
       <div className="max-w-3xl overflow-hidden flex-1">
-        <p
+        <h2
           className="text-2xl sm:text-3xl md:text-4xl lg:text-[2.5rem] 
             font-light leading-relaxed 
             will-change-transform 
@@ -76,16 +79,32 @@ function Letstalk({ scrollProgress = 0 }: LetsTalkProps) {
             transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1), ease-out",
             transitionDelay: "0.2s",
           }}
+          itemProp="description"
         >
-          We design, develop and manage innovative websites optimised using SEO
+          We design, develop and manage innovative websites optimised using{" "}
+          <span
+            itemProp="hasOfferCatalog"
+            itemScope
+            itemType="https://schema.org/OfferCatalog"
+          >
+            <meta itemProp="name" content="SEO Services" />
+            SEO
+          </span>{" "}
           and conversion strategies
-        </p>
+        </h2>
       </div>
 
-      <div className="flex-shrink-0" style={{ pointerEvents: "auto" }}>
-        <CtaButton text="Let's talk" />
+      <div
+        className="flex-shrink-0"
+        style={{ pointerEvents: "auto" }}
+        itemProp="potentialAction"
+        itemScope
+        itemType="https://schema.org/CommunicateAction"
+      >
+        <meta itemProp="name" content="Contact South Box" />
+        <CtaButton text="Let's talk" href="/Contact" />
       </div>
-    </section>
+    </div>
   );
 }
 

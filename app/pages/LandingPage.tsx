@@ -126,222 +126,198 @@ export default function Home() {
 
       // Section 0: Main page
       if (currentSection === SECTIONS.MAIN) {
-        setScrollProgress((prev) => {
-          const newProgress = updateProgress(
-            prev,
-            scrollAmount,
-            direction,
-            standardDivisor
+        const newProgress = updateProgress(
+          scrollProgress,
+          scrollAmount,
+          direction,
+          standardDivisor
+        );
+        setScrollProgress(newProgress);
+
+        if (newProgress >= 1 && direction === 1 && !isScrolling.current) {
+          transitionToSection(
+            SECTIONS.LETSTALK,
+            SCROLL_CONFIG.TRANSITION_DELAY,
+            () => setLetsTalkProgress(0)
           );
-
-          if (newProgress >= 1 && direction === 1 && !isScrolling.current) {
-            transitionToSection(
-              SECTIONS.LETSTALK,
-              SCROLL_CONFIG.TRANSITION_DELAY,
-              () => setLetsTalkProgress(0)
-            );
-          }
-
-          return newProgress;
-        });
+        }
         return;
       }
 
       // Section 1: Letstalk
       if (currentSection === SECTIONS.LETSTALK) {
-        setLetsTalkProgress((prev) => {
-          const newProgress = updateProgress(
-            prev,
-            scrollAmount,
-            direction,
-            standardDivisor
+        const newProgress = updateProgress(
+          letsTalkProgress,
+          scrollAmount,
+          direction,
+          standardDivisor
+        );
+        setLetsTalkProgress(newProgress);
+
+        if (newProgress <= 0 && direction === -1 && !isScrolling.current) {
+          transitionToSection(
+            SECTIONS.MAIN,
+            SCROLL_CONFIG.LONG_TRANSITION_DELAY,
+            () => setScrollProgress(1)
           );
-
-          if (newProgress <= 0 && direction === -1 && !isScrolling.current) {
-            transitionToSection(
-              SECTIONS.MAIN,
-              SCROLL_CONFIG.LONG_TRANSITION_DELAY,
-              () => setScrollProgress(1)
-            );
-          } else if (
-            newProgress >= 1 &&
-            direction === 1 &&
-            !isScrolling.current
-          ) {
-            transitionToSection(
-              SECTIONS.TEXT_REVEAL,
-              SCROLL_CONFIG.LONG_TRANSITION_DELAY,
-              () => setSection2Progress(0)
-            );
-          }
-
-          return newProgress;
-        });
+        } else if (
+          newProgress >= 1 &&
+          direction === 1 &&
+          !isScrolling.current
+        ) {
+          transitionToSection(
+            SECTIONS.TEXT_REVEAL,
+            SCROLL_CONFIG.LONG_TRANSITION_DELAY,
+            () => setSection2Progress(0)
+          );
+        }
         return;
       }
 
       // Section 2: Text Reveal
       if (currentSection === SECTIONS.TEXT_REVEAL) {
-        setSection2Progress((prev) => {
-          const newProgress = updateProgress(
-            prev,
-            scrollAmount,
-            direction,
-            standardDivisor
+        const newProgress = updateProgress(
+          section2Progress,
+          scrollAmount,
+          direction,
+          standardDivisor
+        );
+        setSection2Progress(newProgress);
+
+        if (newProgress <= 0 && direction === -1 && !isScrolling.current) {
+          transitionToSection(
+            SECTIONS.LETSTALK,
+            SCROLL_CONFIG.TRANSITION_DELAY,
+            () => setLetsTalkProgress(1)
           );
-
-          if (newProgress <= 0 && direction === -1 && !isScrolling.current) {
-            transitionToSection(
-              SECTIONS.LETSTALK,
-              SCROLL_CONFIG.TRANSITION_DELAY,
-              () => setLetsTalkProgress(1)
-            );
-          } else if (
-            newProgress >= 1 &&
-            direction === 1 &&
-            !isScrolling.current
-          ) {
-            transitionToSection(
-              SECTIONS.WHATWEDO,
-              SCROLL_CONFIG.TRANSITION_DELAY,
-              () => setSection3Progress(0)
-            );
-          }
-
-          return newProgress;
-        });
+        } else if (
+          newProgress >= 1 &&
+          direction === 1 &&
+          !isScrolling.current
+        ) {
+          transitionToSection(
+            SECTIONS.WHATWEDO,
+            SCROLL_CONFIG.TRANSITION_DELAY,
+            () => setSection3Progress(0)
+          );
+        }
         return;
       }
 
       // Section 3: What we do
       if (currentSection === SECTIONS.WHATWEDO) {
-        setSection3Progress((prev) => {
-          const newProgress = updateProgress(
-            prev,
-            scrollAmount,
-            direction,
-            standardDivisor
+        const newProgress = updateProgress(
+          section3Progress,
+          scrollAmount,
+          direction,
+          standardDivisor
+        );
+        setSection3Progress(newProgress);
+
+        if (newProgress <= 0 && direction === -1 && !isScrolling.current) {
+          transitionToSection(
+            SECTIONS.TEXT_REVEAL,
+            SCROLL_CONFIG.TRANSITION_DELAY,
+            () => setSection2Progress(1)
           );
-
-          if (newProgress <= 0 && direction === -1 && !isScrolling.current) {
-            transitionToSection(
-              SECTIONS.TEXT_REVEAL,
-              SCROLL_CONFIG.TRANSITION_DELAY,
-              () => setSection2Progress(1)
-            );
-          } else if (
-            newProgress >= 1 &&
-            direction === 1 &&
-            !isScrolling.current
-          ) {
-            transitionToSection(
-              SECTIONS.PROJECTS,
-              SCROLL_CONFIG.TRANSITION_DELAY,
-              () => setSection4Progress(0)
-            );
-          }
-
-          return newProgress;
-        });
+        } else if (
+          newProgress >= 1 &&
+          direction === 1 &&
+          !isScrolling.current
+        ) {
+          transitionToSection(
+            SECTIONS.PROJECTS,
+            SCROLL_CONFIG.TRANSITION_DELAY,
+            () => setSection4Progress(0)
+          );
+        }
         return;
       }
 
       // Section 4: Projects
       if (currentSection === SECTIONS.PROJECTS) {
-        setSection4Progress((prev) => {
-          const newProgress = updateProgress(
-            prev,
-            scrollAmount,
-            direction,
-            projectsDivisor,
-            SCROLL_CONFIG.PROJECTS_MAX
+        const newProgress = updateProgress(
+          section4Progress,
+          scrollAmount,
+          direction,
+          projectsDivisor,
+          SCROLL_CONFIG.PROJECTS_MAX
+        );
+        setSection4Progress(newProgress);
+
+        if (newProgress <= 0 && direction === -1 && !isScrolling.current) {
+          transitionToSection(
+            SECTIONS.WHATWEDO,
+            SCROLL_CONFIG.TRANSITION_DELAY,
+            () => setSection3Progress(1)
           );
-
-          if (newProgress <= 0 && direction === -1 && !isScrolling.current) {
-            transitionToSection(
-              SECTIONS.WHATWEDO,
-              SCROLL_CONFIG.TRANSITION_DELAY,
-              () => setSection3Progress(1)
-            );
-          } else if (
-            newProgress >= SCROLL_CONFIG.PROJECTS_MAX &&
-            direction === 1 &&
-            !isScrolling.current
-          ) {
-            transitionToSection(
-              SECTIONS.TRUSTUS,
-              SCROLL_CONFIG.TRANSITION_DELAY,
-              () => setTrustusProgress(0)
-            );
-          }
-
-          return newProgress;
-        });
+        } else if (
+          newProgress >= SCROLL_CONFIG.PROJECTS_MAX &&
+          direction === 1 &&
+          !isScrolling.current
+        ) {
+          transitionToSection(
+            SECTIONS.TRUSTUS,
+            SCROLL_CONFIG.TRANSITION_DELAY,
+            () => setTrustusProgress(0)
+          );
+        }
         return;
       }
 
       // Section 5: Trustus
       if (currentSection === SECTIONS.TRUSTUS) {
-        setTrustusProgress((prev) => {
-          const newProgress = updateProgress(
-            prev,
-            scrollAmount,
-            direction,
-            standardDivisor
+        const newProgress = updateProgress(
+          trustusProgress,
+          scrollAmount,
+          direction,
+          standardDivisor
+        );
+        setTrustusProgress(newProgress);
+
+        if (newProgress <= 0 && direction === -1 && !isScrolling.current) {
+          transitionToSection(
+            SECTIONS.PROJECTS,
+            SCROLL_CONFIG.TRANSITION_DELAY,
+            () => setSection4Progress(SCROLL_CONFIG.PROJECTS_MAX)
           );
-
-          if (newProgress <= 0 && direction === -1 && !isScrolling.current) {
-            transitionToSection(
-              SECTIONS.PROJECTS,
-              SCROLL_CONFIG.TRANSITION_DELAY,
-              () => setSection4Progress(SCROLL_CONFIG.PROJECTS_MAX)
-            );
-          } else if (
-            newProgress >= 1 &&
-            direction === 1 &&
-            !isScrolling.current
-          ) {
-            transitionToSection(
-              SECTIONS.LEAVEREQUEST,
-              SCROLL_CONFIG.TRANSITION_DELAY,
-              () => setLeaveRequestProgress(0)
-            );
-          }
-
-          return newProgress;
-        });
+        } else if (
+          newProgress >= 1 &&
+          direction === 1 &&
+          !isScrolling.current
+        ) {
+          transitionToSection(
+            SECTIONS.LEAVEREQUEST,
+            SCROLL_CONFIG.TRANSITION_DELAY,
+            () => setLeaveRequestProgress(0)
+          );
+        }
         return;
       }
 
       // Section 6: LEAVEREQUEST
       if (currentSection === SECTIONS.LEAVEREQUEST) {
-        setLeaveRequestProgress((prev) => {
-          const newProgress = updateProgress(
-            prev,
-            scrollAmount,
-            direction,
-            standardDivisor
+        const newProgress = updateProgress(
+          leaveRequestProgress,
+          scrollAmount,
+          direction,
+          standardDivisor
+        );
+        setLeaveRequestProgress(newProgress);
+
+        if (newProgress <= 0 && direction === -1 && !isScrolling.current) {
+          transitionToSection(
+            SECTIONS.TRUSTUS,
+            SCROLL_CONFIG.TRANSITION_DELAY,
+            () => setTrustusProgress(1)
           );
-
-          if (newProgress <= 0 && direction === -1 && !isScrolling.current) {
-            transitionToSection(
-              SECTIONS.TRUSTUS,
-              SCROLL_CONFIG.TRANSITION_DELAY,
-              () => setTrustusProgress(1)
-            );
-          } else if (
-            newProgress >= 1 &&
-            direction === 1 &&
-            !isScrolling.current
-          ) {
-            transitionToSection(
-              SECTIONS.FOOTER,
-              SCROLL_CONFIG.TRANSITION_DELAY
-            );
-          }
-
-          return newProgress;
-        });
+        } else if (
+          newProgress >= 1 &&
+          direction === 1 &&
+          !isScrolling.current
+        ) {
+          transitionToSection(SECTIONS.FOOTER, SCROLL_CONFIG.TRANSITION_DELAY);
+        }
         return;
       }
 
@@ -355,7 +331,19 @@ export default function Home() {
         return;
       }
     },
-    [currentSection, transitionToSection, updateProgress, isMobile]
+    [
+      currentSection,
+      scrollProgress,
+      letsTalkProgress,
+      section2Progress,
+      section3Progress,
+      section4Progress,
+      trustusProgress,
+      leaveRequestProgress,
+      transitionToSection,
+      updateProgress,
+      isMobile,
+    ]
   );
 
   // Wheel event handler
@@ -450,6 +438,10 @@ export default function Home() {
     <main
       ref={containerRef}
       className="custom-height overflow-hidden relative bg-[#0a0a0a]"
+      itemScope
+      itemType="https://schema.org/WebPage"
+      role="main"
+      aria-label="South Box Digital Creative Agency Homepage"
     >
       <div
         className="transition-transform duration-700 ease-out"
@@ -457,68 +449,76 @@ export default function Home() {
           transform: `translateY(-${currentSection * 100}vh)`,
         }}
       >
-        <div
+        <section
+          aria-label="Hero Section"
           style={{
             pointerEvents: currentSection === SECTIONS.MAIN ? "auto" : "none",
           }}
         >
           <MainPage scrollProgress={scrollProgress} />
-        </div>
-        <div
+        </section>
+        <section
+          aria-label="Let's Talk Section"
           style={{
             pointerEvents:
               currentSection === SECTIONS.LETSTALK ? "auto" : "none",
           }}
         >
           <Letstalk scrollProgress={letsTalkProgress} />
-        </div>
-        <div
+        </section>
+        <section
+          aria-label="Text Reveal Section"
           style={{
             pointerEvents:
               currentSection === SECTIONS.TEXT_REVEAL ? "auto" : "none",
           }}
         >
           <TextReveal scrollProgress={section2Progress} />
-        </div>
-        <div
+        </section>
+        <section
+          aria-label="What We Do Section"
           style={{
             pointerEvents:
               currentSection === SECTIONS.WHATWEDO ? "auto" : "none",
           }}
         >
           <WhatwedoPage scrollProgress={section3Progress} />
-        </div>
-        <div
+        </section>
+        <section
+          aria-label="Projects Section"
           style={{
             pointerEvents:
               currentSection === SECTIONS.PROJECTS ? "auto" : "none",
           }}
         >
           <ProjectsSection scrollProgress={section4Progress} />
-        </div>
-        <div
+        </section>
+        <section
+          aria-label="Trust Us Section"
           style={{
             pointerEvents:
               currentSection === SECTIONS.TRUSTUS ? "auto" : "none",
           }}
         >
           <TrustusPage scrollProgress={trustusProgress} />
-        </div>
-        <div
+        </section>
+        <section
+          aria-label="Leave Request Section"
           style={{
             pointerEvents:
               currentSection === SECTIONS.LEAVEREQUEST ? "auto" : "none",
           }}
         >
           <LeaveRequest scrollProgress={leaveRequestProgress} />
-        </div>
-        <div
+        </section>
+        <footer
+          aria-label="Footer"
           style={{
             pointerEvents: currentSection === SECTIONS.FOOTER ? "auto" : "none",
           }}
         >
           <Footer />
-        </div>
+        </footer>
       </div>
     </main>
   );

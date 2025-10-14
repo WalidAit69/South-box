@@ -12,6 +12,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = () => {
       category: "Web Development",
       color: "bg-gray-900/50",
       text: "text-white",
+      tags: ["React", "Node.js", "Payment Integration", "Responsive Design"],
     },
     {
       title: "Mobile Banking App",
@@ -19,6 +20,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = () => {
       category: "Mobile App",
       color: "bg-gray-900/50",
       text: "text-white",
+      tags: ["iOS", "Android", "Security", "FinTech"],
     },
     {
       title: "AI Analytics Dashboard",
@@ -26,6 +28,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = () => {
       category: "Data Science",
       color: "bg-gray-900/50",
       text: "text-white",
+      tags: ["Machine Learning", "Data Visualization", "AI", "Analytics"],
     },
     {
       title: "Social Media Platform",
@@ -33,6 +36,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = () => {
       category: "Social Network",
       color: "bg-gray-900/50",
       text: "text-white",
+      tags: ["Community", "Real-time", "Social Features", "Engagement"],
     },
     {
       title: "Healthcare Portal",
@@ -40,6 +44,12 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = () => {
       category: "Healthcare",
       color: "bg-white/50",
       text: "text-black",
+      tags: [
+        "HIPAA Compliant",
+        "Patient Management",
+        "Healthcare IT",
+        "Telemedicine",
+      ],
     },
     {
       title: "Smart Home IoT",
@@ -47,6 +57,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = () => {
       category: "IoT",
       color: "bg-white/60",
       text: "text-black",
+      tags: ["IoT", "Smart Home", "Automation", "Connected Devices"],
     },
     {
       title: "Video Streaming Service",
@@ -54,6 +65,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = () => {
       category: "Media",
       color: "bg-white/70",
       text: "text-black",
+      tags: ["Video Streaming", "CDN", "Media", "Scalability"],
     },
     {
       title: "Educational Platform",
@@ -61,15 +73,79 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = () => {
       category: "EdTech",
       color: "bg-white/80",
       text: "text-black",
+      tags: ["E-learning", "Education", "LMS", "Interactive"],
     },
   ];
 
   return (
-    <section className="h-screen max-w-[90%] mx-auto">
+    <div
+      className="h-screen max-w-[90%] mx-auto"
+      itemScope
+      itemType="https://schema.org/CollectionPage"
+      aria-label="Our Projects Portfolio"
+    >
+      {/* Hidden heading for SEO */}
+      <h2 className="sr-only" itemProp="name">
+        Our Projects - Portfolio Showcase
+      </h2>
+
+      {/* Hidden structured list for SEO */}
+      <div className="sr-only">
+        <p itemProp="description">
+          Explore our portfolio of {projects.length} successful projects across
+          web development, mobile apps, data science, and more. From e-commerce
+          platforms to healthcare solutions, we deliver innovative digital
+          experiences.
+        </p>
+
+        <ul
+          itemProp="mainEntity"
+          itemScope
+          itemType="https://schema.org/ItemList"
+        >
+          <meta itemProp="numberOfItems" content={String(projects.length)} />
+          {projects.map((project, index) => (
+            <li
+              key={index}
+              itemProp="itemListElement"
+              itemScope
+              itemType="https://schema.org/ListItem"
+            >
+              <meta itemProp="position" content={String(index + 1)} />
+              <article
+                itemProp="item"
+                itemScope
+                itemType="https://schema.org/CreativeWork"
+              >
+                <h3 itemProp="name">{project.title}</h3>
+                <meta itemProp="description" content={project.description} />
+                <meta itemProp="genre" content={project.category} />
+                <div
+                  itemProp="about"
+                  itemScope
+                  itemType="https://schema.org/Thing"
+                >
+                  <meta itemProp="name" content={project.category} />
+                </div>
+                {project.tags.map((tag, tagIndex) => (
+                  <meta key={tagIndex} itemProp="keywords" content={tag} />
+                ))}
+                <div
+                  itemProp="creator"
+                  itemScope
+                  itemType="https://schema.org/Organization"
+                >
+                  <meta itemProp="name" content="South Box" />
+                </div>
+              </article>
+            </li>
+          ))}
+        </ul>
+      </div>
+
       <div
-        className="h-full
-      w-full text-white relative overflow-hidden
-      px-2 sm:px-4 md:px-6"
+        className="h-full w-full text-white relative overflow-hidden px-2 sm:px-4 md:px-6"
+        aria-hidden="true"
       >
         <ScrollStack
           className="h-full scrollbar-hide"
@@ -134,6 +210,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = () => {
                   rounded-full backdrop-blur-sm 
                   transition-all
                   whitespace-nowrap"
+                    aria-label={`View details for ${project.title}`}
                   >
                     View Details
                   </button>
@@ -143,7 +220,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = () => {
           ))}
         </ScrollStack>
       </div>
-    </section>
+    </div>
   );
 };
 

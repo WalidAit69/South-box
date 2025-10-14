@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useRef } from "react";
 
 interface TextRevealProps {
   scrollProgress: number;
@@ -12,40 +12,21 @@ export default function TextReveal({ scrollProgress }: TextRevealProps) {
 
   const words = text.split(" ");
   const sectionRef = useRef<HTMLElement>(null);
-  const observerRef = useRef<IntersectionObserver | null>(null);
-  const hasTriggered = useRef(false);
-
-  useEffect(() => {
-    observerRef.current = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting && !hasTriggered.current) {
-            hasTriggered.current = true;
-          }
-        });
-      },
-      {
-        threshold: 0.3,
-      }
-    );
-
-    if (sectionRef.current) {
-      observerRef.current.observe(sectionRef.current);
-    }
-
-    return () => {
-      if (observerRef.current && sectionRef.current) {
-        observerRef.current.unobserve(sectionRef.current);
-      }
-    };
-  }, [words.length]);
 
   const getWordOpacity = (index: number) => {
-    const wordProgress = Math.max(
-      0,
-      Math.min(1, (scrollProgress - index * 0.03) * 3)
-    );
-    return wordProgress;
+    const totalWords = words.length;
+    const revealedWords = scrollProgress * totalWords * 1.5;
+    const wordPosition = index;
+    const fadeRange = 3;
+
+    if (wordPosition < revealedWords - fadeRange) {
+      return 1;
+    } else if (wordPosition < revealedWords) {
+      const fadeProgress = (revealedWords - wordPosition) / fadeRange;
+      return Math.max(0, Math.min(1, fadeProgress));
+    } else {
+      return 0;
+    }
   };
 
   return (
@@ -89,7 +70,7 @@ export default function TextReveal({ scrollProgress }: TextRevealProps) {
               </span>
               <span
                 className="relative text-white 
-                  transition-opacity duration-300 ease-out 
+                  transition-opacity duration-150 ease-out 
                   px-1 sm:px-1.5 md:px-2"
                 style={{
                   opacity: getWordOpacity(i),

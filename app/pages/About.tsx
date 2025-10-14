@@ -9,6 +9,99 @@ export default function AboutPage() {
   const containerRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
+  // Add JSON-LD structured data for About page
+  useEffect(() => {
+    const organizationData = {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      name: "South Box",
+      url: "https://yourdomain.com",
+      logo: "https://yourdomain.com/prism.png",
+      foundingDate: "2019",
+      founders: [
+        {
+          "@type": "Person",
+          name: "Simo Bouachra",
+          jobTitle: "Creative Director",
+        },
+        {
+          "@type": "Person",
+          name: "Walid Ait Harma",
+          jobTitle: "Web Developer",
+        },
+      ],
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: "Casablanca",
+        addressCountry: "MA",
+      },
+      description:
+        "A passionate team dedicated to transforming ideas into stunning digital realities",
+      slogan: "We craft digital experiences that inspire",
+      numberOfEmployees: {
+        "@type": "QuantitativeValue",
+        value: "2-10",
+      },
+      aggregateRating: {
+        "@type": "AggregateRating",
+        ratingValue: "5",
+        bestRating: "5",
+        ratingCount: "30",
+      },
+    };
+
+    const breadcrumbData = {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        {
+          "@type": "ListItem",
+          position: 1,
+          name: "Home",
+          item: "https://yourdomain.com",
+        },
+        {
+          "@type": "ListItem",
+          position: 2,
+          name: "About",
+          item: "https://yourdomain.com/about",
+        },
+      ],
+    };
+
+    const aboutPageData = {
+      "@context": "https://schema.org",
+      "@type": "AboutPage",
+      name: "About South Box",
+      description: "Learn about South Box, our story, values, and team members",
+      mainEntity: {
+        "@type": "Organization",
+        name: "South Box",
+      },
+    };
+
+    const script1 = document.createElement("script");
+    script1.type = "application/ld+json";
+    script1.text = JSON.stringify(organizationData);
+    document.head.appendChild(script1);
+
+    const script2 = document.createElement("script");
+    script2.type = "application/ld+json";
+    script2.text = JSON.stringify(breadcrumbData);
+    document.head.appendChild(script2);
+
+    const script3 = document.createElement("script");
+    script3.type = "application/ld+json";
+    script3.text = JSON.stringify(aboutPageData);
+    document.head.appendChild(script3);
+
+    return () => {
+      document.head.removeChild(script1);
+      document.head.removeChild(script2);
+      document.head.removeChild(script3);
+    };
+  }, []);
+
   // Initial load animation
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -107,9 +200,17 @@ export default function AboutPage() {
   ];
 
   return (
-    <main ref={containerRef} className="bg-[#0a0a0a] max-w-[90%] mx-auto text-white min-h-screen">
+    <main
+      ref={containerRef}
+      className="bg-[#0a0a0a] max-w-[90%] mx-auto text-white min-h-screen"
+      itemScope
+      itemType="https://schema.org/AboutPage"
+    >
       {/* Hero Section with Text Reveal */}
-      <section className="min-h-screen flex items-center sm:items-start justify-center px-4 sm:mt-20 pb-20 sm:pb-0">
+      <section
+        className="min-h-screen flex items-center sm:items-start justify-center px-4 sm:mt-20 pb-20 sm:pb-0"
+        aria-label="About Hero Section"
+      >
         <div
           className="text-center"
           style={{
@@ -123,16 +224,19 @@ export default function AboutPage() {
               style={{
                 opacity: isLoaded ? 1 : 0,
                 transform: `translateY(${isLoaded ? "0" : "20px"})`,
-                transition: "opacity 0.8s ease-out, transform 1s cubic-bezier(0.16, 1, 0.3, 1)",
+                transition:
+                  "opacity 0.8s ease-out, transform 1s cubic-bezier(0.16, 1, 0.3, 1)",
                 transitionDelay: "0.2s",
               }}
+              aria-hidden="true"
             ></div>
             <span
               className="text-sm sm:text-base uppercase tracking-wider"
               style={{
                 opacity: isLoaded ? 1 : 0,
                 transform: `translateY(${isLoaded ? "0" : "20px"})`,
-                transition: "opacity 0.8s ease-out, transform 1s cubic-bezier(0.16, 1, 0.3, 1)",
+                transition:
+                  "opacity 0.8s ease-out, transform 1s cubic-bezier(0.16, 1, 0.3, 1)",
                 transitionDelay: "0.3s",
               }}
             >
@@ -144,6 +248,7 @@ export default function AboutPage() {
           <div className="overflow-hidden mb-8">
             <h1
               className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold leading-tight"
+              itemProp="headline"
               style={{
                 transform: `translateY(${isLoaded ? "0" : "100%"})`,
                 transition: "transform 1.2s cubic-bezier(0.16, 1, 0.3, 1)",
@@ -161,10 +266,12 @@ export default function AboutPage() {
           <div className="overflow-hidden">
             <p
               className="text-lg sm:text-xl md:text-2xl text-white/70 max-w-3xl mx-auto leading-relaxed"
+              itemProp="description"
               style={{
                 opacity: isLoaded ? 1 : 0,
                 transform: `translateY(${isLoaded ? "0" : "100%"})`,
-                transition: "opacity 1s ease-out, transform 1.5s cubic-bezier(0.16, 1, 0.3, 1)",
+                transition:
+                  "opacity 1s ease-out, transform 1.5s cubic-bezier(0.16, 1, 0.3, 1)",
                 transitionDelay: "0.6s",
               }}
             >
@@ -176,7 +283,12 @@ export default function AboutPage() {
       </section>
 
       {/* Story Section with Reveal */}
-      <section className="min-h-screen flex items-center justify-center px-4 py-20">
+      <section
+        className="min-h-screen flex items-center justify-center px-4 py-20"
+        aria-label="Our Story"
+        itemScope
+        itemType="https://schema.org/Organization"
+      >
         <div
           className="max-w-4xl mx-auto"
           style={{
@@ -196,10 +308,14 @@ export default function AboutPage() {
             </h2>
           </div>
           <div className="space-y-6 text-lg sm:text-xl md:text-2xl text-white/80 leading-relaxed">
-            <p>
-              Founded in 2019, SouthBox began with a simple mission: to bridge
-              the gap between creative vision and technical excellence. We
-              believe that great digital products aren&apos;t just functional—they&apos;re
+            <p itemProp="description">
+              Founded in{" "}
+              <time dateTime="2019" itemProp="foundingDate">
+                2019
+              </time>
+              , SouthBox began with a simple mission: to bridge the gap between
+              creative vision and technical excellence. We believe that great
+              digital products aren&apos;t just functional—they&apos;re
               experiences that resonate.
             </p>
             <p>
@@ -209,15 +325,19 @@ export default function AboutPage() {
               who share one common goal: creating work that matters.
             </p>
             <p>
-              We don&apos;t just build websites and apps. We craft digital ecosystems
-              that help businesses thrive in an ever-evolving digital landscape.
+              We don&apos;t just build websites and apps. We craft digital
+              ecosystems that help businesses thrive in an ever-evolving digital
+              landscape.
             </p>
           </div>
         </div>
       </section>
 
       {/* Stats Section with Reveal */}
-      <section className="min-h-screen flex items-center justify-center px-4 py-20">
+      <section
+        className="min-h-screen flex items-center justify-center px-4 py-20"
+        aria-label="Statistics"
+      >
         <div
           className="max-w-6xl mx-auto w-full"
           style={{
@@ -239,28 +359,41 @@ export default function AboutPage() {
 
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
             {stats.map((stat, index) => (
-              <div
+              <article
                 key={index}
                 className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8 hover:bg-white/10 transition-all duration-500 hover:scale-105 hover:-translate-y-2"
                 style={{
                   transitionDelay: `${index * 100}ms`,
                 }}
+                itemScope
+                itemType="https://schema.org/QuantitativeValue"
               >
-                <div className="text-5xl mb-4">{stat.icon}</div>
-                <div className="text-4xl sm:text-5xl font-bold mb-3 text-transparent bg-clip-text bg-gradient-to-br from-white to-white/60">
+                <div className="text-5xl mb-4" aria-hidden="true">
+                  {stat.icon}
+                </div>
+                <div
+                  className="text-4xl sm:text-5xl font-bold mb-3 text-transparent bg-clip-text bg-gradient-to-br from-white to-white/60"
+                  itemProp="value"
+                >
                   {stat.number}
                 </div>
-                <div className="text-sm sm:text-base text-white/70">
+                <div
+                  className="text-sm sm:text-base text-white/70"
+                  itemProp="name"
+                >
                   {stat.label}
                 </div>
-              </div>
+              </article>
             ))}
           </div>
         </div>
       </section>
 
       {/* Values Section with Reveal */}
-      <section className="min-h-screen flex items-center justify-center px-4 py-20">
+      <section
+        className="min-h-screen flex items-center justify-center px-4 py-20"
+        aria-label="Our Values"
+      >
         <div
           className="max-w-6xl mx-auto w-full"
           style={{ opacity: valuesOpacity }}
@@ -279,7 +412,7 @@ export default function AboutPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
             {values.map((value, index) => (
-              <div
+              <article
                 key={index}
                 className="group bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8 hover:bg-white/10 transition-all duration-500"
                 style={{
@@ -288,7 +421,10 @@ export default function AboutPage() {
                   transitionDelay: `${index * 100}ms`,
                 }}
               >
-                <div className="text-5xl sm:text-6xl mb-6 transform group-hover:scale-110 transition-transform duration-300">
+                <div
+                  className="text-5xl sm:text-6xl mb-6 transform group-hover:scale-110 transition-transform duration-300"
+                  aria-hidden="true"
+                >
                   {value.icon}
                 </div>
                 <h3 className="text-2xl sm:text-3xl font-semibold mb-4">
@@ -297,14 +433,19 @@ export default function AboutPage() {
                 <p className="text-base sm:text-lg text-white/70 leading-relaxed">
                   {value.description}
                 </p>
-              </div>
+              </article>
             ))}
           </div>
         </div>
       </section>
 
       {/* Team Section with Reveal */}
-      <section className="min-h-screen flex items-center justify-center px-4 py-20">
+      <section
+        className="min-h-screen flex items-center justify-center px-4 py-20"
+        aria-label="Meet the Team"
+        itemScope
+        itemType="https://schema.org/Organization"
+      >
         <div
           className="max-w-6xl mx-auto w-full"
           style={{
@@ -326,33 +467,49 @@ export default function AboutPage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8">
             {team.map((member, index) => (
-              <div
+              <article
                 key={index}
                 className="group relative overflow-hidden rounded-2xl aspect-square"
                 style={{
                   transitionDelay: `${index * 100}ms`,
                 }}
+                itemScope
+                itemType="https://schema.org/Person"
+                itemProp="employee"
               >
                 <div
                   className={`absolute inset-0 bg-gradient-to-br ${member.color} opacity-80 group-hover:opacity-100 transition-opacity duration-500`}
+                  aria-hidden="true"
                 ></div>
                 <div className="relative h-full flex flex-col items-center justify-center p-6 text-center">
-                  <div className="w-20 h-20 sm:w-24 sm:h-24 bg-white/20 rounded-full mb-4 group-hover:scale-110 transition-transform duration-500"></div>
-                  <h3 className="text-xl sm:text-2xl font-bold mb-2">
+                  <div
+                    className="w-20 h-20 sm:w-24 sm:h-24 bg-white/20 rounded-full mb-4 group-hover:scale-110 transition-transform duration-500"
+                    aria-hidden="true"
+                  ></div>
+                  <h3
+                    className="text-xl sm:text-2xl font-bold mb-2"
+                    itemProp="name"
+                  >
                     {member.name}
                   </h3>
-                  <p className="text-sm sm:text-base text-white/80">
+                  <p
+                    className="text-sm sm:text-base text-white/80"
+                    itemProp="jobTitle"
+                  >
                     {member.role}
                   </p>
                 </div>
-              </div>
+              </article>
             ))}
           </div>
         </div>
       </section>
 
       {/* CTA Section with Reveal */}
-      <section className="min-h-screen flex items-center justify-center px-4 py-20">
+      <section
+        className="min-h-screen flex items-center justify-center px-4 py-20"
+        aria-label="Call to Action"
+      >
         <div
           className="max-w-4xl mx-auto text-center"
           style={{
@@ -375,8 +532,9 @@ export default function AboutPage() {
             Let&apos;s create something amazing together
           </p>
           <button
-            onClick={() => router.push("/")}
+            onClick={() => router.push("/Contact")}
             className="px-8 sm:px-12 py-4 sm:py-5 text-base sm:text-lg bg-white text-black font-semibold rounded-full hover:bg-white/90 transition-all duration-300 transform hover:scale-105"
+            aria-label="Start a project with South Box"
           >
             Start a Project
           </button>

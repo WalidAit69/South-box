@@ -1,17 +1,20 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 
 interface props {
   text: string;
+  href: string;
 }
 
-function CtaButton({ text }: props) {
+function CtaButton({ text, href }: props) {
   const [buttonTransform, setButtonTransform] = useState({});
   const [rippleStyle, setRippleStyle] = useState({});
   const [isHovered, setIsHovered] = useState(false);
+  const [isActive, setIsActive] = useState(false);
 
-  const handleButtonMove = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleButtonMove = (e: React.MouseEvent<HTMLAnchorElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
@@ -24,12 +27,11 @@ function CtaButton({ text }: props) {
     });
   };
 
-  const handleButtonEnter = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleButtonEnter = (e: React.MouseEvent<HTMLAnchorElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
 
-    // Calculate the maximum distance to ensure full coverage
     const maxDistance = Math.max(
       Math.hypot(x, y),
       Math.hypot(rect.width - x, y),
@@ -54,11 +56,40 @@ function CtaButton({ text }: props) {
     setIsHovered(false);
   };
 
+  const handleTouchStart = (e: React.TouchEvent<HTMLAnchorElement>) => {
+    const touch = e.touches[0];
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = touch.clientX - rect.left;
+    const y = touch.clientY - rect.top;
+
+    const maxDistance = Math.max(
+      Math.hypot(x, y),
+      Math.hypot(rect.width - x, y),
+      Math.hypot(x, rect.height - y),
+      Math.hypot(rect.width - x, rect.height - y)
+    );
+
+    setRippleStyle({
+      left: `${x}px`,
+      top: `${y}px`,
+      width: `${maxDistance * 2}px`,
+      height: `${maxDistance * 2}px`,
+    });
+    setIsActive(true);
+  };
+
+  const handleTouchEnd = () => {
+    setIsActive(false);
+  };
+
   return (
-    <button
+    <Link
+      href={href}
       onMouseMove={handleButtonMove}
       onMouseEnter={handleButtonEnter}
       onMouseLeave={handleButtonLeave}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
       className="z-50 cursor-pointer group relative 
         w-[120px] h-[120px] 
         sm:w-[160px] sm:h-[160px] 
@@ -74,13 +105,17 @@ function CtaButton({ text }: props) {
         className="absolute rounded-full bg-white transition-all duration-500 ease-out pointer-events-none"
         style={{
           ...rippleStyle,
-          transform: `translate(-50%, -50%) scale(${isHovered ? 1 : 0})`,
-          opacity: isHovered ? 1 : 0,
+          transform: `translate(-50%, -50%) scale(${
+            isHovered || isActive ? 1 : 0
+          })`,
+          opacity: isHovered || isActive ? 1 : 0,
         }}
       />
 
       <div
-        className="relative z-10 flex flex-col items-center text-white group-hover:text-black transition-colors duration-300"
+        className={`relative z-10 flex flex-col items-center transition-colors duration-300 ${
+          isActive ? "text-black" : "text-white group-hover:text-black"
+        }`}
         style={buttonTransform}
       >
         <svg
@@ -106,7 +141,7 @@ function CtaButton({ text }: props) {
           {text}
         </span>
       </div>
-    </button>
+    </Link>
   );
 }
 

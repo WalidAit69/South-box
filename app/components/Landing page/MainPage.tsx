@@ -41,6 +41,44 @@ export default function MainPage({ scrollProgress }: LandingProps) {
     };
   }, []);
 
+  // JSON-LD Structured Data for SEO
+  useEffect(() => {
+    const structuredData = {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      name: "South Box",
+      url: "https://yourdomain.com",
+      logo: "https://yourdomain.com/southbox2.png",
+      description:
+        "The agency that covers your digital needs in a creative and efficient way",
+      address: {
+        "@type": "PostalAddress",
+        addressCountry: "Your Country",
+      },
+      contactPoint: {
+        "@type": "ContactPoint",
+        contactType: "Customer Service",
+        url: "https://yourdomain.com/Contact",
+      },
+      sameAs: [
+        // Add your social media URLs here
+        // "https://facebook.com/southbox",
+        // "https://twitter.com/southbox",
+        // "https://linkedin.com/company/southbox",
+        // "https://instagram.com/southbox"
+      ],
+    };
+
+    const script = document.createElement("script");
+    script.type = "application/ld+json";
+    script.text = JSON.stringify(structuredData);
+    document.head.appendChild(script);
+
+    return () => {
+      document.head.removeChild(script);
+    };
+  }, []);
+
   const easeOutCubic = (t: number): number => {
     return 1 - Math.pow(1 - t, 3);
   };
@@ -107,10 +145,13 @@ export default function MainPage({ scrollProgress }: LandingProps) {
   `;
 
   return (
-    <section
+    <div
       className="text-white flex flex-col items-center justify-center relative max-w-[90%] mx-auto custom-height"
       onMouseMove={handlePageMouseMove}
       onMouseLeave={handlePageMouseLeave}
+      itemScope
+      itemType="https://schema.org/Organization"
+      aria-label="South Box Digital Creative Agency Hero Section"
     >
       <div className="relative z-10 w-full">
         {/* CTA Button - Responsive positioning */}
@@ -122,7 +163,7 @@ export default function MainPage({ scrollProgress }: LandingProps) {
             transitionDelay: useLoadDelays ? "0.3s, 0.7s" : "0s",
           }}
         >
-          <CtaButton text="Start a project" />
+          <CtaButton text="Start a project" href="/Contact" />
         </div>
 
         {/* Prism Image - Responsive sizing */}
@@ -139,7 +180,7 @@ export default function MainPage({ scrollProgress }: LandingProps) {
         >
           <Image
             src="/prism.png"
-            alt="south box"
+            alt="South Box creative digital agency logo - innovative prism design representing our creative solutions"
             width={300}
             height={300}
             className="pointer-events-none select-none w-[150px] h-[150px] sm:w-[200px] sm:h-[200px] md:w-[250px] md:h-[250px] lg:w-[300px] lg:h-[300px]"
@@ -148,6 +189,7 @@ export default function MainPage({ scrollProgress }: LandingProps) {
               transition: "opacity 0.3s ease-out",
             }}
             priority
+            itemProp="logo"
           />
         </div>
 
@@ -157,6 +199,7 @@ export default function MainPage({ scrollProgress }: LandingProps) {
           <div className="overflow-hidden px-[5vw]">
             <h1
               className="hero-heading"
+              itemProp="name"
               style={{
                 transform: `translateX(${southTranslateX}px) translateY(${
                   isLoaded ? "0" : "100%"
@@ -206,13 +249,13 @@ export default function MainPage({ scrollProgress }: LandingProps) {
                 : "ease",
             }}
           >
-            <p className="hero-tagline">
+            <p className="hero-tagline" itemProp="description">
               The agency that covers your digital needs in a creative and
               efficient way
             </p>
           </div>
         </div>
       </div>
-    </section>
+    </div>
   );
 }

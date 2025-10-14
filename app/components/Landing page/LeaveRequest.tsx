@@ -52,14 +52,36 @@ function LeaveRequest({ scrollProgress = 0 }: LeaveRequestProps) {
   const buttonOpacity = Math.min(1, buttonProgress);
 
   return (
-    <section
+    <div
       className="max-w-[90%] mx-auto h-screen flex flex-col items-center justify-center pb-20 relative"
       style={{
         transform: `scale(${scale})`,
         opacity: opacity,
         transition: "transform 0.1s ease-out, opacity 0.1s ease-out",
       }}
+      itemScope
+      itemType="https://schema.org/ContactPage"
+      aria-label="Project Request Form"
     >
+      {/* Hidden SEO content */}
+      <div className="sr-only">
+        <h2 itemProp="name">Start Your Project with South Box</h2>
+        <p itemProp="description">
+          Leave a project request to work with South Box Digital Agency. Share
+          your brief, goals, and requirements. We specialize in web development,
+          mobile apps, branding, and digital marketing. Get a free consultation
+          and quote for your next digital project.
+        </p>
+        <div
+          itemProp="provider"
+          itemScope
+          itemType="https://schema.org/Organization"
+        >
+          <meta itemProp="name" content="South Box" />
+          <meta itemProp="email" content="hello@southbox.com" />
+        </div>
+      </div>
+
       {/* Initial Content */}
       <div
         className={`w-full 
@@ -94,16 +116,18 @@ function LeaveRequest({ scrollProgress = 0 }: LeaveRequestProps) {
               className="border-2 border-white/80 w-2 h-2 rounded-xs
                 transition-all duration-300 ease-in-out rotate-45
                 group-hover:rotate-[135deg]"
+              aria-hidden="true"
             ></div>
             <span className="text-sm sm:text-base">Leave a request</span>
           </div>
-          <p
+          <h2
             className="text-lg sm:text-xl md:text-2xl lg:text-[2rem] 
             font-light leading-relaxed will-change-transform"
+            aria-hidden="true"
           >
             We&apos;d love to be challenged by you! Feel free to share your
             brief with us.
-          </p>
+          </h2>
         </div>
 
         <div
@@ -113,10 +137,16 @@ function LeaveRequest({ scrollProgress = 0 }: LeaveRequestProps) {
             opacity: buttonOpacity,
             transition: "transform 0.1s ease-out, opacity 0.1s ease-out",
           }}
+          itemProp="potentialAction"
+          itemScope
+          itemType="https://schema.org/CommunicateAction"
         >
+          <meta itemProp="name" content="Start Your Project" />
           <div onClick={() => setShowForm(true)}>
-            {/* CtaButton placeholder - replace with your actual component */}
-            <button className="px-8 py-4 bg-white text-black rounded-full font-medium hover:bg-white/90 transition-colors">
+            <button
+              className="px-8 py-4 bg-white text-black rounded-full font-medium hover:bg-white/90 transition-colors"
+              aria-label="Open project request form"
+            >
               Let&apos;s start your project
             </button>
           </div>
@@ -132,6 +162,9 @@ function LeaveRequest({ scrollProgress = 0 }: LeaveRequestProps) {
             ? "opacity-100 scale-100 pointer-events-auto"
             : "opacity-0 scale-95 pointer-events-none"
         }`}
+        role="dialog"
+        aria-modal={showForm}
+        aria-labelledby="form-title"
       >
         <div
           className="w-full max-w-2xl 
@@ -145,18 +178,23 @@ function LeaveRequest({ scrollProgress = 0 }: LeaveRequestProps) {
           <div className="mb-6 sm:mb-8">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
-                <div className="border-2 border-white/80 w-2 h-2 rounded-xs rotate-45"></div>
+                <div
+                  className="border-2 border-white/80 w-2 h-2 rounded-xs rotate-45"
+                  aria-hidden="true"
+                ></div>
                 <span className="text-sm sm:text-base">Start Your Project</span>
               </div>
               <button
                 onClick={() => setShowForm(false)}
                 className="text-white/60 hover:text-white transition-colors"
+                aria-label="Close form"
               >
                 <svg
                   className="w-6 h-6"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
+                  aria-hidden="true"
                 >
                   <path
                     strokeLinecap="round"
@@ -167,20 +205,31 @@ function LeaveRequest({ scrollProgress = 0 }: LeaveRequestProps) {
                 </svg>
               </button>
             </div>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-light">
+            <h2
+              id="form-title"
+              className="text-2xl sm:text-3xl md:text-4xl font-light"
+            >
               Tell us about your project
             </h2>
           </div>
 
           {/* Form Fields */}
-          <div className="space-y-6">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSubmit();
+            }}
+            itemScope
+            itemType="https://schema.org/ContactForm"
+            className="space-y-6"
+          >
             {/* Email Input */}
             <div>
               <label
                 htmlFor="email"
                 className="block text-sm font-medium mb-2 text-white/80"
               >
-                Email Address
+                Email Address <span aria-label="required">*</span>
               </label>
               <input
                 type="email"
@@ -189,6 +238,10 @@ function LeaveRequest({ scrollProgress = 0 }: LeaveRequestProps) {
                 value={formData.email}
                 onChange={handleChange}
                 placeholder="your@email.com"
+                required
+                autoComplete="email"
+                aria-required="true"
+                itemProp="email"
                 className="w-full px-4 py-3 
                   bg-white/5 border border-white/20 
                   rounded-lg 
@@ -204,7 +257,7 @@ function LeaveRequest({ scrollProgress = 0 }: LeaveRequestProps) {
                 htmlFor="description"
                 className="block text-sm font-medium mb-2 text-white/80"
               >
-                Project Description
+                Project Description <span aria-label="required">*</span>
               </label>
               <textarea
                 id="description"
@@ -213,6 +266,9 @@ function LeaveRequest({ scrollProgress = 0 }: LeaveRequestProps) {
                 onChange={handleChange}
                 rows={6}
                 placeholder="Tell us about your project, goals, and any specific requirements..."
+                required
+                aria-required="true"
+                itemProp="text"
                 className="w-full px-4 py-3 
                   bg-white/5 border border-white/20 
                   rounded-lg 
@@ -226,31 +282,34 @@ function LeaveRequest({ scrollProgress = 0 }: LeaveRequestProps) {
             {/* Buttons */}
             <div className="flex gap-4 pt-4">
               <button
-                onClick={handleSubmit}
+                type="submit"
                 className="flex-1 px-6 py-3 
                   bg-white text-black 
                   rounded-full font-medium
                   hover:bg-white/90
                   transition-all duration-300
                   transform hover:scale-[1.02]"
+                aria-label="Submit project request"
               >
                 Submit Request
               </button>
               <button
+                type="button"
                 onClick={() => setShowForm(false)}
                 className="px-6 py-3 
                   bg-white/10 text-white 
                   rounded-full font-medium
                   hover:bg-white/20
                   transition-all duration-300"
+                aria-label="Cancel and close form"
               >
                 Cancel
               </button>
             </div>
-          </div>
+          </form>
         </div>
       </div>
-    </section>
+    </div>
   );
 }
 
