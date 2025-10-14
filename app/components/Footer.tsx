@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Footer() {
   const footerLinks = [
@@ -88,7 +89,7 @@ export default function Footer() {
             itemScope
             itemType="https://schema.org/Organization"
           >
-            <a href="/" aria-label="South Box home page" itemProp="url">
+            <Link href="/" aria-label="South Box home page" itemProp="url">
               <Image
                 src="/prism.png"
                 alt="South Box logo - Digital Creative Agency"
@@ -96,7 +97,7 @@ export default function Footer() {
                 height={200}
                 itemProp="logo"
               />
-            </a>
+            </Link>
             <meta itemProp="name" content="South Box" />
             <meta
               itemProp="description"
