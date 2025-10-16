@@ -12,6 +12,8 @@ function Letstalk({ scrollProgress = 0 }: LetsTalkProps) {
   const sectionRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
+    const currentSection = sectionRef.current; // Store ref value in variable
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -26,13 +28,13 @@ function Letstalk({ scrollProgress = 0 }: LetsTalkProps) {
       }
     );
 
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
+    if (currentSection) {
+      observer.observe(currentSection);
     }
 
     return () => {
-      if (sectionRef.current) {
-        observer.unobserve(sectionRef.current);
+      if (currentSection) {
+        observer.unobserve(currentSection);
       }
     };
   }, [isVisible]);

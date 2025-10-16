@@ -279,6 +279,31 @@ export default function AboutPage() {
               digital realities
             </p>
           </div>
+
+          <div
+            className="mt-16"
+            style={{
+              opacity: isLoaded ? 1 : 0,
+              transition: "opacity 1s ease-out",
+              transitionDelay: "0.8s",
+            }}
+            aria-hidden="true"
+          >
+            <div className="flex flex-col items-center gap-2 animate-bounce">
+              <span className="text-sm text-white/50">Scroll to continue</span>
+              <svg
+                className="w-6 h-6 text-white/50"
+                fill="none"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+              </svg>
+            </div>
+          </div>
         </div>
       </section>
 
