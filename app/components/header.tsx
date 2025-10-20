@@ -2,10 +2,24 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  // Prevent scrolling when menu is open
+  useEffect(() => {
+    if (isMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+
+    // Cleanup function to reset overflow when component unmounts
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isMenuOpen]);
 
   const links = [
     {
@@ -98,7 +112,7 @@ function Header() {
         }}
       >
         <nav className="flex items-center justify-start h-full pl-[10%]">
-          <ul className="space-y-8 text-white sm:text-8xl text-5xl font-semibold">
+          <ul className="space-y-8 text-white text-8xl menu-link font-semibold">
             {links.map((item, index) => (
               <li key={item.title}>
                 {/* Overflow wrapper for reveal animation */}

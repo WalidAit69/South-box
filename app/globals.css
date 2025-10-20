@@ -170,6 +170,10 @@ body {
   .hero-heading {
     font-size: clamp(13rem, 20vw, 10rem);
   }
+
+  .menu-link{
+    font-size: 5rem;
+  }
 }
 
 /* Very small height screens */
